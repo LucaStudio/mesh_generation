@@ -1,14 +1,40 @@
 function[lattice]=transfiniteinterpolation2D(N,compdomain,xi_min,xi_max,eta_min,eta_max,Ndim1,Ndim2,interpolanttype,e1,e2,e3,e4,c1,c2,c3,c4)
 
 %%
-%        Project: Fluid-Structure Interaction on Deformable Surfaces
-%         Author: Luca Di Stasio
-%    Institution: ETH ZÃ¼rich
-%                 Institute for Building Materials
-% Research group: Computational Physics for Engineering Materials
-%        Version: 0.1
-%  Creation date: April 15th, 2014
-%    Last update: July 10th, 2014
+%==============================================================================
+% Copyright (c) 2016 Université de Lorraine & Luleå tekniska universitet
+% Author: Luca Di Stasio <luca.distasio@gmail.com>
+%                        <luca.distasio@ingpec.eu>
+%
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are met:
+% 
+% 
+% Redistributions of source code must retain the above copyright
+% notice, this list of conditions and the following disclaimer.
+% Redistributions in binary form must reproduce the above copyright
+% notice, this list of conditions and the following disclaimer in
+% the documentation and/or other materials provided with the distribution
+% Neither the name of the Université de Lorraine or Luleå tekniska universitet
+% nor the names of its contributors may be used to endorse or promote products
+% derived from this software without specific prior written permission.
+% 
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+% POSSIBILITY OF SUCH DAMAGE.
+%==============================================================================
+%
+%  DESCRIPTION
+%  
+%  A function to
 %
 %          Input: meshed computational domain compdomain
 %                 numerical flag to choose the interpolant type
@@ -44,8 +70,8 @@ switch interpolanttype
             for p=1:Ndim1
                 xi  = compdomain(p + (r-1)*Ndim1,1);
                 eta = compdomain(p + (r-1)*Ndim1,2);
-                mesh(p + (r-1)*Ndim1,1) = Lagrangeinterps1D([xi_min;xi_max],[e2(r,1);e4(r,1)],xi) + Lagrangeinterps1D([eta_min;eta_max],[e1(p,1);e3(p,1)],eta) - Lagrangeinterps2D([xi_min;xi_max],[eta_min;eta_max],[c1(1,1) c4(1,1);c2(1,1) c3(1,1)],xi,eta);
-                mesh(p + (r-1)*Ndim1,2) = Lagrangeinterps1D([xi_min;xi_max],[e2(r,2);e4(r,2)],xi) + Lagrangeinterps1D([eta_min;eta_max],[e1(p,2);e3(p,2)],eta) - Lagrangeinterps2D([xi_min;xi_max],[eta_min;eta_max],[c1(1,2) c4(1,2);c2(1,2) c3(1,2)],xi,eta); 
+                mesh(p + (r-1)*Ndim1,1) = Lagrangeinterps1D([xi_min;xi_max],[e4(r,1);e2(r,1)],xi) + Lagrangeinterps1D([eta_min;eta_max],[e1(p,1);e3(p,1)],eta) - Lagrangeinterps2D([xi_min;xi_max],[eta_min;eta_max],[c1(1,1) c4(1,1);c2(1,1) c3(1,1)],xi,eta);
+                mesh(p + (r-1)*Ndim1,2) = Lagrangeinterps1D([xi_min;xi_max],[e4(r,2);e2(r,2)],xi) + Lagrangeinterps1D([eta_min;eta_max],[e1(p,2);e3(p,2)],eta) - Lagrangeinterps2D([xi_min;xi_max],[eta_min;eta_max],[c1(1,2) c4(1,2);c2(1,2) c3(1,2)],xi,eta); 
             end
         end
     case 2 %--------------------------- Hermite
@@ -53,8 +79,8 @@ switch interpolanttype
             for p=1:Ndim1
                 xi  = compdomain(p + (r-1)*Ndim1,1);
                 eta = compdomain(p + (r-1)*Ndim1,2);
-                mesh(p + (r-1)*Ndim1,1) = Hermiteinterps1D([xi_min;xi_max],[e2(r,1);e4(r,1)],[e2(r,3);e4(r,3)],xi) + Hermiteinterps1D([eta_min;eta_max],[e1(p,1);e3(p,1)],[e2(r,4);e4(r,4)],eta) - Hermiteinterps2D([xi_min;xi_max],[eta_min;eta_max],[c1(1,1) c4(1,1);c2(1,1) c3(1,1)],[c1(1,3) c4(1,3);c2(1,3) c3(1,3)],[c1(1,4) c4(1,4);c2(1,4) c3(1,4)],[c1(1,7) c4(1,7);c2(1,7) c3(1,7)],xi,eta);
-                mesh(p + (r-1)*Ndim1,2) = Hermiteinterps1D([xi_min;xi_max],[e2(r,2);e4(r,2)],[e2(r,5);e4(r,5)],xi) + Hermiteinterps1D([eta_min;eta_max],[e1(p,2);e3(p,2)],[e2(r,6);e4(r,6)],eta) - Hermiteinterps2D([xi_min;xi_max],[eta_min;eta_max],[c1(1,2) c4(1,2);c2(1,2) c3(1,2)],[c1(1,5) c4(1,5);c2(1,5) c3(1,5)],[c1(1,6) c4(1,6);c2(1,6) c3(1,6)],[c1(1,8) c4(1,8);c2(1,8) c3(1,8)],xi,eta); 
+                mesh(p + (r-1)*Ndim1,1) = Hermiteinterps1D([xi_min;xi_max],[e4(r,1);e2(r,1)],[e4(r,3);e2(r,3)],xi) + Hermiteinterps1D([eta_min;eta_max],[e1(p,1);e3(p,1)],[e4(r,4);e2(r,4)],eta) - Hermiteinterps2D([xi_min;xi_max],[eta_min;eta_max],[c1(1,1) c4(1,1);c2(1,1) c3(1,1)],[c1(1,3) c4(1,3);c2(1,3) c3(1,3)],[c1(1,4) c4(1,4);c2(1,4) c3(1,4)],[c1(1,7) c4(1,7);c2(1,7) c3(1,7)],xi,eta);
+                mesh(p + (r-1)*Ndim1,2) = Hermiteinterps1D([xi_min;xi_max],[e4(r,2);e2(r,2)],[e4(r,5);e2(r,5)],xi) + Hermiteinterps1D([eta_min;eta_max],[e1(p,2);e3(p,2)],[e4(r,6);e2(r,6)],eta) - Hermiteinterps2D([xi_min;xi_max],[eta_min;eta_max],[c1(1,2) c4(1,2);c2(1,2) c3(1,2)],[c1(1,5) c4(1,5);c2(1,5) c3(1,5)],[c1(1,6) c4(1,6);c2(1,6) c3(1,6)],[c1(1,8) c4(1,8);c2(1,8) c3(1,8)],xi,eta); 
             end
         end
 end
