@@ -1,4 +1,4 @@
-function[mesh]=rectangle(x0,y0,lx,ly,Nx,Ny)
+function[mesh]=structRectangle(x0,y0,lx,ly,Nx,Ny)
 
 %%
 %==============================================================================

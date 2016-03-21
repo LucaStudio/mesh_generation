@@ -1,4 +1,4 @@
-function[mesh]=rectangle(x0,y0,lx,ly,Nx,Ny)
+function[mesh]=structSquare(x0,y0,l,N)
 
 %%
 %==============================================================================
@@ -36,22 +36,15 @@ function[mesh]=rectangle(x0,y0,lx,ly,Nx,Ny)
 %  
 %  A function to generate meshed rectangles 
 %
-%  Input: Nx - Number of ELEMENTS in x-direction
-%         Ny - Number of ELEMENTS in y-direction
-%  Output: 
+%  Input: x0 - scalar - x-coordinate of center
+%         y0 - scalar - y-coordinate of center
+%         l - scalar - Side length in x-direction
+%         N - scalar - Number of ELEMENTS in x-direction
+%  Output: mesh - (N+1)*(N+1) x 2 matrix - mesh nodes ordered through helical
+%          indexing
 %
 %%
 
-mesh = zeros((Nx+1)*(Ny+1),2);
-
-deltax = lx/Nx;
-deltay = ly/Ny;
-
-xs = ((x0-0.5*lx):deltax:(x0+0.5*lx))';
-
-for j=1:Ny+1
-    lattice((j-1)*Nx+1:j*Nx,3) = xs;
-    lattice((j-1)*Nx+1:j*Nx,4) = (ymin+deltay*(j-1))*ones(Nx,1);
-end
+mesh = structRectangle(x0,y0,l,l,N,N);
 
 return
