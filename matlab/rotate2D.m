@@ -1,5 +1,4 @@
-function[mesh]=circular_arc(x0,y0,R1,R2,theta1,theta2,Nr,Ntheta)
-
+function[newmesh]=rotate2D(mesh,theta)
 %%
 %==============================================================================
 % Copyright (c) 2016 Université de Lorraine & Luleå tekniska universitet
@@ -34,31 +33,26 @@ function[mesh]=circular_arc(x0,y0,R1,R2,theta1,theta2,Nr,Ntheta)
 %
 %  DESCRIPTION
 %  
-%  A function to generate meshed rectangles 
+%  A function to perform 2D counter-clockwise rotations around the origin
 %
-%  Input: x0 - scalar - x-coordinate of center
-%         y0 - scalar - y-coordinate of center
-%         R1 - scalar - Inner radius
-%         R2 - scalar - Outer radius
-%         theta1 - scalar - Initial angle in radians
-%         theta2 - scalar - Final angle in radians
-%         Nr - scalar - Number of ELEMENTS in r-direction
-%         Ntheta - scalar - Number of ELEMENTS in theta-direction
-%  Output: mesh - (Nr+1)*(Ntheta+1) x 2 matrix - mesh nodes ordered through helical
-%          indexing
+%  Input: mesh - N x D matrix - D coordinates of N mesh points ordered in
+%                helical fashion
+%         theta - scalar - angle of rotation in radians
+%  Output: mesh - N x D matrix - rotated mesh
 %
 %%
 
-mesh = zeros((Nr+1)*(Ntheta+1),2);
+[M,N] = size(mesh);
 
-deltar = lx/Nx;
-deltatheta = ly/Ny;
+newmesh = mesh;
 
-xs = ((x0-0.5*lx):deltax:(x0+0.5*lx))';
-
-for j=1:Ny+1
-    mesh((j-1)*(Nx+1)+1:j*(Nx+1),1) = xs;
-    mesh((j-1)*(Nx+1)+1:j*(Nx+1),2) = ((y0-0.5*ly)+deltay*(j-1))*ones((Nx+1),1);
+if N==2
+    T = [cos(theta)  sin(theta);...
+         -sin(theta) cos(theta)];
+    newmesh(:,1) = T(1,1)*mesh(:,1) + T(1,2)*mesh(:,2);
+    newmesh(:,1) = T(2,1)*mesh(:,1) + T(2,2)*mesh(:,2);
+else
+    disp('Error: dimensions mismatch. Result left equal to input.')
 end
 
 return
