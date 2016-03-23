@@ -102,14 +102,14 @@ mesh(indicesC4,2) = c4(1,2);
 mesh(indicesE1,1) = e1(2:end-1,1);
 mesh(indicesE1,2) = e1(2:end-1,2);
 
-mesh(indicesE2,1) = e4(2:end-1,1);
-mesh(indicesE2,2) = e4(2:end-1,2);
+mesh(indicesE2,1) = e2(2:end-1,1);
+mesh(indicesE2,2) = e2(2:end-1,2);
 
 mesh(indicesE3,1) = e3(2:end-1,1);
 mesh(indicesE3,2) = e3(2:end-1,2);
 
-mesh(indicesE4,1) = e2(2:end-1,1);
-mesh(indicesE4,2) = e2(2:end-1,2);
+mesh(indicesE4,1) = e4(2:end-1,1);
+mesh(indicesE4,2) = e4(2:end-1,2);
 
 lattice = [compdomain mesh mesh];
 
