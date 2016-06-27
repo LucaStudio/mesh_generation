@@ -47,10 +47,10 @@ function[newmesh]=rotate2D(mesh,theta)
 newmesh = mesh;
 
 if N==2
-    T = [cos(theta)  sin(theta);...
-         -sin(theta) cos(theta)];
+    T = [cos(theta)  -sin(theta);...
+         sin(theta) cos(theta)];
     newmesh(:,1) = T(1,1)*mesh(:,1) + T(1,2)*mesh(:,2);
-    newmesh(:,1) = T(2,1)*mesh(:,1) + T(2,2)*mesh(:,2);
+    newmesh(:,2) = T(2,1)*mesh(:,1) + T(2,2)*mesh(:,2);
 else
     disp('Error: dimensions mismatch. Result left equal to input.')
 end
