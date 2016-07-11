@@ -48,10 +48,8 @@ function[] = triquality(nodes,edges,elements)
 %     Link: http://imr.sandia.gov/papers/imr18/Knupp.pdf
 % [6] P. Knupp, Algebraic Mesh Quality Metrics. SIAM Journal of Scientific Computing 23(2001),1 193-218
 %     Link: http://imr.sandia.gov/papers/imr18/Knupp.pdf
-% [7] P. Knupp, Algebraic mesh quality metrics for unstructured initial meshes. Finite Elements in Analysis and Design 39:3(2003) 217-241
-%     Link: http://www.sciencedirect.com.bases-doc.univ-lorraine.fr/science/article/pii/S0168874X02000707
-% [8] Cubit 14.0 User Documentation.
-%     Link: https://cubit.sandia.gov/public/14.0/help_manual/WebHelp/mesh_generation/mesh_quality_assessment/triangular_metrics.htm
+% [7] Cubit 14.0 User Documentation.
+%     Link: https://cubit.sandia.gov/public/14.0/help_manual/WebHelp/mesh_generation/mesh_quality_assessment/quadrilateral_metrics.htm
 %%
 
 end

@@ -1,4 +1,4 @@
-function[] = quadquality(nodes,edges,elements)
+function[] = quadquality(nodes,elements)
 %%
 %==============================================================================
 % Copyright (c) 2016 Université de Lorraine & Luleå tekniska universitet
@@ -49,11 +49,13 @@ function[] = quadquality(nodes,edges,elements)
 %     Link: http://imr.sandia.gov/papers/imr18/Knupp.pdf
 % [6] P. Knupp, Algebraic Mesh Quality Metrics. SIAM Journal of Scientific Computing 23(2001),1 193-218
 %     Link: http://imr.sandia.gov/papers/imr18/Knupp.pdf
+% [7] Cubit 14.0 User Documentation.
+%     Link: https://cubit.sandia.gov/public/14.0/help_manual/WebHelp/mesh_generation/mesh_quality_assessment/quadrilateral_metrics.htm
 %%
 
 switch size(elements,2)
     case 4
-        
+                                                                           % Nodes
         x1 = nodes(elements(:,1),1);
         x2 = nodes(elements(:,2),1);
         x3 = nodes(elements(:,3),1);
@@ -62,21 +64,23 @@ switch size(elements,2)
         y2 = nodes(elements(:,2),2);
         y3 = nodes(elements(:,3),2);
         y4 = nodes(elements(:,4),2);
-        
+                                                                           % Edges (as vectors in the plane)
         edge1 = [x2-x1 y2-y1];
         edge2 = [x3-x2 y3-y2];
         edge3 = [x3-x4 y3-y4];
         edge4 = [x4-x1 y4-y1];
-        
+                                                                           % Diagonals (as vectors in the plane)
         diag1 = [x3-x1 y3-y1];
         diag2 = [x4-x2 y4-y2];
         
+                                                                           % Edges' lengths
         lengths = [sqrt(sum(edge1.^2,2)) sqrt(sum(edge2.^2,2)) sqrt(sum(edge3.^2,2)) sqrt(sum(edge4.^2,2))];
         
         minL = min(lengths,[],2);
         maxL = max(lengths,[],2);
         meanL = mean(lengths,[],2);
         
+                                                                           % Internal angles
         alphas = [acos(sum(edge4.*edge1,2)./(lengths(:,4).*lengths(:,1)))...
                   acos(sum(-edge1.*edge2,2)./(lengths(:,1).*lengths(:,2)))...
                   acos(sum(-edge2.*(-edge3),2)./(lengths(:,2).*lengths(:,3)))...
@@ -86,23 +90,26 @@ switch size(elements,2)
         maxAlpha = max(alphas,[],2);
         meanAlpha = mean(alphas,[],2);
         
+                                                                           % Diagonals' lengths
         Dlengths = [sqrt(sum(diag1.^2,2)) sqrt(sum(diag2.^2,2))];
         
         minD = min(Dlengths,[],2);
         maxD = max(Dlengths,[],2);
         meanD = mean(Dlengths,[],2);
         
+                                                                           % Angles between diagonals
         betas = acos(sum(diag1.*diag2,2)./(Dlengths(:,1).*Dlengths(:,2))).*(180/pi);
         betas = [betas 180-betas];
         
-        A = 0.5*(lengths(:,1)*lengths(:,4)*sin(alphas(:,1).*(pi/180))+lengths(:,2)*lengths(:,3)*sin(alphas(:,3).*(pi/180)));
+                                                                           % Element's area
+        A = 0.5*(lengths(:,1).*lengths(:,4).*sin(alphas(:,1).*(pi/180))+lengths(:,2).*lengths(:,3).*sin(alphas(:,3).*(pi/180)));
         
         e1 = 0.25*(x1+x2+x3+x4);                                           % translation of origin along x
         e2 = 0.25*(-x1+x2+x3-x4);                                          % half length along x
         e3 = 0.25*(-x1-x2+x3+x4);                                          % skew rotation
         e4 = 0.25*(x1-x2+x3-x4);                                           % taper along x
         f1 = 0.25*(y1+y2+y3+y4);                                           % translation of origin along y
-        f2 = 0.25*(-y1+y2+y3-y4);                                          % half length along x
+        f2 = 0.25*(-y1+y2+y3-y4);                                          % half length along y
         f3 = 0.25*(-y1-y2+y3+y4);                                          % rotation of axes
         f4 = 0.25*(y1-y2+y3-y4);                                           % taper along y
         
@@ -112,13 +119,101 @@ switch size(elements,2)
         Ty = e4./e2;                                                       % taper in y direction
         stretch = sqrt(2).*minL./maxD;                                     % stretch
         
-        J = [f3.^2.*ar...
-             f3.^2.*ar.*(1+Tx*(-1)+(Ty-(skew./ar).*Tx)*(-1))...
-             f3.^2.*ar.*(1+Tx*(1)+(Ty-(skew./ar).*Tx)*(-1))...
-             f3.^2.*ar.*(1+Tx*(1)+(Ty-(skew./ar).*Tx)*(1))...
-             f3.^2.*ar.*(1+Tx*(-1)+(Ty-(skew./ar).*Tx)*(1))];
+                                                                           % Jacobian at:
+        J = [f3.^2.*ar...                                                  %    central point
+             f3.^2.*ar.*(1+Tx*(-1)+(Ty-(skew./ar).*Tx)*(-1))...            %    south-west corner
+             f3.^2.*ar.*(1+Tx*(1)+(Ty-(skew./ar).*Tx)*(-1))...             %    south-east corner
+             f3.^2.*ar.*(1+Tx*(1)+(Ty-(skew./ar).*Tx)*(1))...              %    north-east corner
+             f3.^2.*ar.*(1+Tx*(-1)+(Ty-(skew./ar).*Tx)*(1))];              %    north-west corner
+         
+                                                                           % Ratio of Jacobian to actual area at:
+        JA = [f3.^2.*ar...                                                  %    central point
+             f3.^2.*ar.*(1+Tx*(-1)+(Ty-(skew./ar).*Tx)*(-1))...            %    south-west corner
+             f3.^2.*ar.*(1+Tx*(1)+(Ty-(skew./ar).*Tx)*(-1))...             %    south-east corner
+             f3.^2.*ar.*(1+Tx*(1)+(Ty-(skew./ar).*Tx)*(1))...              %    north-east corner
+             f3.^2.*ar.*(1+Tx*(-1)+(Ty-(skew./ar).*Tx)*(1))]./[A A A A A]; %    north-west corner
         
     case 8
+                                                                           % Nodes
+        x1 = nodes(elements(:,1),1);
+        x2 = nodes(elements(:,2),1);
+        x3 = nodes(elements(:,3),1);
+        x4 = nodes(elements(:,4),1);
+        x5 = nodes(elements(:,1),1);
+        x6 = nodes(elements(:,2),1);
+        x7 = nodes(elements(:,3),1);
+        x8 = nodes(elements(:,4),1);
+        y1 = nodes(elements(:,1),2);
+        y2 = nodes(elements(:,2),2);
+        y3 = nodes(elements(:,3),2);
+        y4 = nodes(elements(:,4),2);
+        y5 = nodes(elements(:,1),2);
+        y6 = nodes(elements(:,2),2);
+        y7 = nodes(elements(:,3),2);
+        y8 = nodes(elements(:,4),2);
+                                                                           % Edges of chord quadrilateral (as vectors in the plane)
+        edge1 = [x2-x1 y2-y1];
+        edge2 = [x3-x2 y3-y2];
+        edge3 = [x3-x4 y3-y4];
+        edge4 = [x4-x1 y4-y1];
+                                                                           % Diagonals (as vectors in the plane)
+        diag1 = [x3-x1 y3-y1];
+        diag2 = [x4-x2 y4-y2];
+        
+        e1 = -0.25*(x1+x2+x3+x4)+0.5*(x5+x6+x7+x8);                        
+        e2 = 0.5*(x6-x8);                                                  % Half length of horizontal side of circumscribing rectangle
+        e3 = 0.5*(-x5+x7);                                                 
+        e4 = 0.25*(x1-x2+x3-x4);                                           
+        e5 = 0.25*(x1+x2+x3+x4)-0.5*(x5+x7);                               
+        e6 = 0.25*(x1+x2+x3+x4)-0.5*(x6+x8);                                                  
+        e7 = 0.25*(-x1-x2+x3+x4)+0.5*(x5-x7);                                                 
+        e8 = 0.25*(-x1+x2+x3-x4)+0.5*(-x6+x8);                                           
+        
+        f1 = -0.25*(y1+y2+y3+y4)+0.5*(y5+y6+y7+y8);                        
+        f2 = 0.5*(y6-y8);                                                  % Half length of vertical side of circumscribing rectangle
+        f3 = 0.5*(-y5+y7);                                                 
+        f4 = 0.25*(y1-y2+y3-y4);                                           
+        f5 = 0.25*(y1+y2+y3+y4)-0.5*(y5+y7);                               
+        f6 = 0.25*(y1+y2+y3+y4)-0.5*(y6+y8);                                                  
+        f7 = 0.25*(-y1-y2+y3+y4)+0.5*(y5-y7);                                                 
+        f8 = 0.25*(-y1+y2+y3-y4)+0.5*(-y6+y8);
+        
+        ar = max(e2./f3,f3./e2);                                           % aspect ratio
+        skew = e3./f3+f2./e2;                                              % skew
+        Tx = f4./f3;                                                       % taper in x direction
+        Ty = e4./e2;                                                       % taper in y direction
+        
+        vckB12 = [-(e5-e7) -(f5-f7)];                                      % Offset vector for boundary 1->2
+        vckB23 = [-(e6+e8) -(f6+f8)];                                      % Offset vector for boundary 2->3
+        vckB34 = [-(e5+e7) -(f5+f7)];                                      % Offset vector for boundary 3->4
+        vckB41 = [-(e6-e8) -(f6-f8)];                                      % Offset vector for boundary 4->1
+        
+                                                                           % Edges' length of chord quadrilateral
+        lengths = [sqrt(sum(edge1.^2,2)) sqrt(sum(edge2.^2,2)) sqrt(sum(edge3.^2,2)) sqrt(sum(edge4.^2,2))];
+        
+                                                                           % Edges' tangential unit vector of chord quadrilateral (as vectors in the plane)
+        dirEdge1 = edge1./[lengths(:,1) lengths(:,1)];
+        dirEdge2 = edge2./[lengths(:,2) lengths(:,2)];
+        dirEdge3 = edge3./[lengths(:,3) lengths(:,3)];
+        dirEdge4 = edge4./[lengths(:,4) lengths(:,4)];
+    
+                                                                           % Edges' normal unit vector of chord quadrilateral (as vectors in the plane)
+        norEdge1 = [dirEdge1(:,2) -dirEdge1(:,1)];
+        norEdge2 = [dirEdge2(:,2) -dirEdge2(:,1)];
+        norEdge3 = [dirEdge3(:,2) -dirEdge3(:,1)];
+        norEdge4 = [dirEdge4(:,2) -dirEdge4(:,1)];
+        
+                                                                           % Tangential deviation
+        TD = 2*[(vckB12(:,1).*dirEdge1(:,1)+vckB12(:,2).*dirEdge1(:,2))./lengths(:,1)...
+                (vckB23(:,1).*dirEdge2(:,1)+vckB23(:,2).*dirEdge2(:,2))./lengths(:,2)...
+                (vckB34(:,1).*dirEdge3(:,1)+vckB34(:,2).*dirEdge3(:,2))./lengths(:,3)...
+                (vckB41(:,1).*dirEdge4(:,1)+vckB41(:,2).*dirEdge4(:,2))./lengths(:,4)];
+                                                                           
+                                                                           % Normal deviation
+        ND = 2*[(vckB12(:,1).*norEdge1(:,1)+vckB12(:,2).*norEdge1(:,2))./lengths(:,1)...
+                (vckB23(:,1).*norEdge2(:,1)+vckB23(:,2).*norEdge2(:,2))./lengths(:,2)...
+                (vckB34(:,1).*norEdge3(:,1)+vckB34(:,2).*norEdge3(:,2))./lengths(:,3)...
+                (vckB41(:,1).*norEdge4(:,1)+vckB41(:,2).*norEdge4(:,2))./lengths(:,4)];
         
 end
 
