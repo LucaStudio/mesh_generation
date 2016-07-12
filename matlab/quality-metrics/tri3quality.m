@@ -1,4 +1,4 @@
-function[] = triquality(nodes,edges,elements)
+function[fshape,minL,maxL,meanL,minAlpha,maxAlpha,meanAlpha,A,minA,maxA,meanA,J,JA] = tri3quality(nodes,elements)
 %%
 %==============================================================================
 % Copyright (c) 2016 Université de Lorraine & Luleå tekniska universitet
@@ -32,7 +32,7 @@ function[] = triquality(nodes,edges,elements)
 %==============================================================================
 %
 %  DESCRIPTION
-%  A function to measure quality metrics of a mesh with triangular
+%  A function to measure quality metrics of a mesh with 3-nodes linear triangular
 %  elements
 %
 % REFERENCES
@@ -48,9 +48,58 @@ function[] = triquality(nodes,edges,elements)
 %     Link: http://imr.sandia.gov/papers/imr18/Knupp.pdf
 % [6] P. Knupp, Algebraic Mesh Quality Metrics. SIAM Journal of Scientific Computing 23(2001),1 193-218
 %     Link: http://imr.sandia.gov/papers/imr18/Knupp.pdf
-% [7] Cubit 14.0 User Documentation.
-%     Link: https://cubit.sandia.gov/public/14.0/help_manual/WebHelp/mesh_generation/mesh_quality_assessment/quadrilateral_metrics.htm
+% [7] P. Knupp, Algebraic mesh quality metrics for unstructured initial meshes. Finite Elements in Analysis and Design 39:3(2003) 217-241
+%     Link: http://www.sciencedirect.com.bases-doc.univ-lorraine.fr/science/article/pii/S0168874X02000707
+% [8] Gang Mei, John C. Tipper and Nengxiong Xu, The Modified Direct Method: an Approach for Smoothing Planar and Surface Meshes. Procedia Computer Science 18(2013) 2436-2439
+%     Link: http://arxiv.org/pdf/1212.3133.pdf
+% [9] Cubit 14.0 User Documentation.
+%     Link: https://cubit.sandia.gov/public/14.0/help_manual/WebHelp/mesh_generation/mesh_quality_assessment/triangular_metrics.htm
 %%
+
+x1 = nodes(elements(:,1),1);
+x2 = nodes(elements(:,2),1);
+x3 = nodes(elements(:,3),1);
+y1 = nodes(elements(:,1),2);
+y2 = nodes(elements(:,2),2);
+y3 = nodes(elements(:,3),2);
+
+                                                                   % Edges (as vectors in the plane)
+edge1 = [x2-x1 y2-y1];
+edge2 = [x3-x2 y3-y2];
+edge3 = [x3-x1 y3-y1];
+
+lengths = [sqrt(sum(edge1.^2,2)) sqrt(sum(edge2.^2,2)) sqrt(sum(edge3.^2,2))];
+
+minL = min(lengths,[],2);
+maxL = max(lengths,[],2);
+meanL = mean(lengths,[],2);
+                                                                   % Internal angles
+alphas = [acos(sum(edge3.*edge1,2)./(lengths(:,3).*lengths(:,1)))...
+          acos(sum(-edge1.*edge2,2)./(lengths(:,1).*lengths(:,2)))...
+          acos(sum(-edge2.*(-edge3),2)./(lengths(:,2).*lengths(:,3)))].*(180/pi);
+
+minAlpha = min(alphas,[],2);
+maxAlpha = max(alphas,[],2);
+meanAlpha = mean(alphas,[],2);
+
+                                                                           % Element's area
+A = 0.5*lengths(:,2).*lengths(:,3).*sin(alphas(:,3).*(pi/180));
+
+
+minA = min(A,[],2);
+maxA = max(A,[],2);
+meanA = mean(A,[],2);
+
+lambda11 = lengths(:,1).^2;
+lambda22 = lengths(:,3).^2;
+lambda12 = sqrt(lambda11.*lambda22)*cos(alphas(:,1));
+
+J = sqrt(lambda11.*lambda22.*(sin(alphas(:,1)).^2));
+
+                                                                           % Ratio of Jacobian to actual area
+JA = J./A;
+
+fshape = sqrt(3)*J./(lambda11+lambda22-lambda12);                          % 1 if the triangle is equilateral, 0 if it's degenerate
 
 end
 

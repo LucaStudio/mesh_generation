@@ -126,12 +126,8 @@ switch size(elements,2)
              f3.^2.*ar.*(1+Tx*(1)+(Ty-(skew./ar).*Tx)*(1))...              %    north-east corner
              f3.^2.*ar.*(1+Tx*(-1)+(Ty-(skew./ar).*Tx)*(1))];              %    north-west corner
          
-                                                                           % Ratio of Jacobian to actual area at:
-        JA = [f3.^2.*ar...                                                  %    central point
-             f3.^2.*ar.*(1+Tx*(-1)+(Ty-(skew./ar).*Tx)*(-1))...            %    south-west corner
-             f3.^2.*ar.*(1+Tx*(1)+(Ty-(skew./ar).*Tx)*(-1))...             %    south-east corner
-             f3.^2.*ar.*(1+Tx*(1)+(Ty-(skew./ar).*Tx)*(1))...              %    north-east corner
-             f3.^2.*ar.*(1+Tx*(-1)+(Ty-(skew./ar).*Tx)*(1))]./[A A A A A]; %    north-west corner
+                                                                           % Ratio of Jacobian to actual area
+        JA = J./[A A A A A];
         
     case 8
                                                                            % Nodes
@@ -139,18 +135,18 @@ switch size(elements,2)
         x2 = nodes(elements(:,2),1);
         x3 = nodes(elements(:,3),1);
         x4 = nodes(elements(:,4),1);
-        x5 = nodes(elements(:,1),1);
-        x6 = nodes(elements(:,2),1);
-        x7 = nodes(elements(:,3),1);
-        x8 = nodes(elements(:,4),1);
+        x5 = nodes(elements(:,5),1);
+        x6 = nodes(elements(:,6),1);
+        x7 = nodes(elements(:,7),1);
+        x8 = nodes(elements(:,8),1);
         y1 = nodes(elements(:,1),2);
         y2 = nodes(elements(:,2),2);
         y3 = nodes(elements(:,3),2);
         y4 = nodes(elements(:,4),2);
-        y5 = nodes(elements(:,1),2);
-        y6 = nodes(elements(:,2),2);
-        y7 = nodes(elements(:,3),2);
-        y8 = nodes(elements(:,4),2);
+        y5 = nodes(elements(:,5),2);
+        y6 = nodes(elements(:,6),2);
+        y7 = nodes(elements(:,7),2);
+        y8 = nodes(elements(:,8),2);
                                                                            % Edges of chord quadrilateral (as vectors in the plane)
         edge1 = [x2-x1 y2-y1];
         edge2 = [x3-x2 y3-y2];
@@ -191,6 +187,33 @@ switch size(elements,2)
                                                                            % Edges' length of chord quadrilateral
         lengths = [sqrt(sum(edge1.^2,2)) sqrt(sum(edge2.^2,2)) sqrt(sum(edge3.^2,2)) sqrt(sum(edge4.^2,2))];
         
+        minL = min(lengths,[],2);
+        maxL = max(lengths,[],2);
+        meanL = mean(lengths,[],2);
+        
+                                                                           % Internal angles of chord quadrilateral
+        alphas = [acos(sum(edge4.*edge1,2)./(lengths(:,4).*lengths(:,1)))...
+                  acos(sum(-edge1.*edge2,2)./(lengths(:,1).*lengths(:,2)))...
+                  acos(sum(-edge2.*(-edge3),2)./(lengths(:,2).*lengths(:,3)))...
+                  acos(sum(edge3.*(-edge4),2)./(lengths(:,3).*lengths(:,4)))].*(180/pi);
+        
+        minAlpha = min(alphas,[],2);
+        maxAlpha = max(alphas,[],2);
+        meanAlpha = mean(alphas,[],2);
+        
+                                                                           % Diagonals' lengths of chord quadrilateral
+        Dlengths = [sqrt(sum(diag1.^2,2)) sqrt(sum(diag2.^2,2))];
+        
+        minD = min(Dlengths,[],2);
+        maxD = max(Dlengths,[],2);
+        meanD = mean(Dlengths,[],2);
+        
+                                                                           % Angles between diagonals of chord quadrilateral
+        betas = acos(sum(diag1.*diag2,2)./(Dlengths(:,1).*Dlengths(:,2))).*(180/pi);
+        betas = [betas 180-betas];
+        
+                                                                           
+        
                                                                            % Edges' tangential unit vector of chord quadrilateral (as vectors in the plane)
         dirEdge1 = edge1./[lengths(:,1) lengths(:,1)];
         dirEdge2 = edge2./[lengths(:,2) lengths(:,2)];
@@ -215,6 +238,27 @@ switch size(elements,2)
                 (vckB34(:,1).*norEdge3(:,1)+vckB34(:,2).*norEdge3(:,2))./lengths(:,3)...
                 (vckB41(:,1).*norEdge4(:,1)+vckB41(:,2).*norEdge4(:,2))./lengths(:,4)];
         
+                                                                           % Jacobian
+        J = [((x5-x1)*(y8-y1)-(y5-y1)*(x8-x1))...
+             ((x2-x5)*(y6-y2)-(y2-y5)*(x6-x2))...
+             ((x3-x7)*(y3-y6)-(y3-y7)*(x3-x6))...
+             ((x7-x4)*(y4-y8)-(y7-y4)*(x4-x8))];
+        
+                                                                           % Internal angles of triangles external to chord quadrilateral
+        gammas = [acos(sum([x5-x1 y5-y1].*edge1,2)./(lengths(:,1).*sqrt(sum([x5-x1 y5-y1].^2,2))))...
+                  acos(sum([x6-x2 y6-y2].*edge2,2)./(lengths(:,2).*sqrt(sum([x6-x2 y6-y2].^2,2))))...
+                  acos(sum([x7-x4 y7-y4].*edge3,2)./(lengths(:,3).*sqrt(sum([x7-x4 y7-y4].^2,2))))...
+                  acos(sum([x8-x1 y8-y1].*edge4,2)./(lengths(:,4).*sqrt(sum([x8-x1 y8-y1].^2,2))))];
+              
+                                                                           % Element's area
+        A = 0.5*(lengths(:,1).*lengths(:,4).*sin(alphas(:,1).*(pi/180))+lengths(:,2).*lengths(:,3).*sin(alphas(:,3).*(pi/180)))+...
+            sign(ND(:,1)).*0.5*(lengths(:,1).*sqrt(sum([x5-x1 y5-y1].^2,2))).*sin(gammas(:,1))+...
+            sign(ND(:,2)).*0.5*(lengths(:,2).*sqrt(sum([x6-x2 y6-y2].^2,2))).*sin(gammas(:,2))+...
+            sign(ND(:,3)).*0.5*(lengths(:,3).*sqrt(sum([x7-x4 y7-y4].^2,2))).*sin(gammas(:,3))+...
+            sign(ND(:,4)).*0.5*(lengths(:,4).*sqrt(sum([x8-x1 y8-y1].^2,2))).*sin(gammas(:,4));
+        
+                                                                          % Ratio of Jacobian to actual area
+        JA = J./[A A A A];
 end
 
 end
