@@ -1,4 +1,4 @@
-function[fshape,TD,ND,minL,maxL,meanL,minAlpha,maxAlpha,meanAlpha,A,minA,maxA,meanA,J,JA] = tri6quality(nodes,elements)
+function[] = tri6quality(nodes,elements)
 %%
 %==============================================================================
 % Copyright (c) 2016 Université de Lorraine & Luleå tekniska universitet
@@ -86,6 +86,7 @@ maxAlpha = max(alphas,[],2);
 meanAlpha = mean(alphas,[],2);
 
 
+
 vckB12 = [x4-0.5*(x1+x2) y4-0.5*(y1+y2)];                                      % Offset vector for boundary 1->2
 vckB23 = [x5-0.5*(x3+x2) y5-0.5*(y3+y2)];                                      % Offset vector for boundary 2->3
 vckB13 = [x6-0.5*(x1+x3) y6-0.5*(y1+y3)];                                      % Offset vector for boundary 1->3
@@ -103,7 +104,7 @@ norEdge3 = [dirEdge3(:,2) -dirEdge3(:,1)];
                                                                    % Tangential deviation
 TD = 2*[(vckB12(:,1).*dirEdge1(:,1)+vckB12(:,2).*dirEdge1(:,2))./lengths(:,1)...
         (vckB23(:,1).*dirEdge2(:,1)+vckB23(:,2).*dirEdge2(:,2))./lengths(:,2)...
-        (vckB13(:,1).*dirEdge3(:,1)+vckB13(:,2).*dirEdge3(:,2))./lengths(:,3)];
+        (vckB34(:,1).*dirEdge3(:,1)+vckB34(:,2).*dirEdge3(:,2))./lengths(:,3)];
 
                                                                    % Normal deviation
 ND = 2*[(vckB12(:,1).*norEdge1(:,1)+vckB12(:,2).*norEdge1(:,2))./lengths(:,1)...
@@ -118,28 +119,22 @@ J = [((x4-x1)*(y6-y1)-(y4-y1)*(x6-x1))...
                                                                            % Internal angles of triangles external to chord triangle
 gammas = [acos(sum([x4-x1 y4-y1].*edge1,2)./(lengths(:,1).*sqrt(sum([x4-x1 y4-y1].^2,2))))...
           acos(sum([x5-x2 y5-y2].*edge2,2)./(lengths(:,2).*sqrt(sum([x5-x2 y5-y2].^2,2))))...
-          acos(sum([x6-x1 y6-y1].*edge3,2)./(lengths(:,3).*sqrt(sum([x6-x1 y6-y1].^2,2))))];
+          acos(sum([x7-x4 y7-y4].*edge3,2)./(lengths(:,3).*sqrt(sum([x7-x4 y7-y4].^2,2))))...
+          acos(sum([x6-x1 y8-y1].*edge4,2)./(lengths(:,4).*sqrt(sum([x8-x1 y8-y1].^2,2))))];
 
                                                                    % Element's area
-A = 0.5*lengths(:,1).*lengths(:,3).*sin(alphas(:,1).*(pi/180))+...
-    sign(ND(:,1)).*0.5*(lengths(:,1).*sqrt(sum([x4-x1 y4-y1].^2,2))).*sin(gammas(:,1))+...
-    sign(ND(:,2)).*0.5*(lengths(:,2).*sqrt(sum([x5-x2 y5-y2].^2,2))).*sin(gammas(:,2))+...
-    sign(ND(:,3)).*0.5*(lengths(:,3).*sqrt(sum([x6-x1 y6-y1].^2,2))).*sin(gammas(:,3));
+A = 0.5*(lengths(:,1).*lengths(:,4).*sin(alphas(:,1).*(pi/180))+lengths(:,2).*lengths(:,3).*sin(alphas(:,3).*(pi/180)))+...
+    sign(ND(:,1)).*0.5*(lengths(:,1).*sqrt(sum([x5-x1 y5-y1].^2,2))).*sin(gammas(:,1))+...
+    sign(ND(:,2)).*0.5*(lengths(:,2).*sqrt(sum([x6-x2 y6-y2].^2,2))).*sin(gammas(:,2))+...
+    sign(ND(:,3)).*0.5*(lengths(:,3).*sqrt(sum([x7-x4 y7-y4].^2,2))).*sin(gammas(:,3))+...
+    sign(ND(:,4)).*0.5*(lengths(:,4).*sqrt(sum([x8-x1 y8-y1].^2,2))).*sin(gammas(:,4));
 
 minA = min(A,[],2);
 maxA = max(A,[],2);
 meanA = mean(A,[],2);
 
-                                                                           % Ratio of Jacobian to actual area
-JA = J./[A A A];
-
-lambda11 = lengths(:,1).^2;
-lambda22 = lengths(:,3).^2;
-lambda12 = sqrt(lambda11.*lambda22)*cos(alphas(:,1));
-
-J1 = sqrt(lambda11.*lambda22.*(sin(alphas(:,1)).^2));
-
-fshape = sqrt(3)*J1./(lambda11+lambda22-lambda12);                          % 1 if the triangle is equilateral, 0 if it's degenerate
+                                                                  % Ratio of Jacobian to actual area
+JA = J./[A A A A];
 
 end
 
