@@ -141,5 +141,5 @@ J1 = sqrt(lambda11.*lambda22.*(sin(alphas(:,1)).^2));
 
 fshape = sqrt(3)*J1./(lambda11+lambda22-lambda12);                          % 1 if the triangle is equilateral, 0 if it's degenerate
 
-end
+return
 

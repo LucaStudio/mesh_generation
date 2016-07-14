@@ -72,7 +72,7 @@ lengths = [sqrt(sum(edge1.^2,2)) sqrt(sum(edge2.^2,2)) sqrt(sum(edge3.^2,2))];
 
 minL = min(lengths,[],2);
 maxL = max(lengths,[],2);
-meanL = mean(lengths,[],2);
+meanL = mean(lengths,2);
                                                                    % Internal angles
 alphas = [acos(sum(edge3.*edge1,2)./(lengths(:,3).*lengths(:,1)))...
           acos(sum(-edge1.*edge2,2)./(lengths(:,1).*lengths(:,2)))...
@@ -80,7 +80,7 @@ alphas = [acos(sum(edge3.*edge1,2)./(lengths(:,3).*lengths(:,1)))...
 
 minAlpha = min(alphas,[],2);
 maxAlpha = max(alphas,[],2);
-meanAlpha = mean(alphas,[],2);
+meanAlpha = mean(alphas,2);
 
                                                                            % Element's area
 A = 0.5*lengths(:,2).*lengths(:,3).*sin(alphas(:,3).*(pi/180));
@@ -88,11 +88,11 @@ A = 0.5*lengths(:,2).*lengths(:,3).*sin(alphas(:,3).*(pi/180));
 
 minA = min(A,[],2);
 maxA = max(A,[],2);
-meanA = mean(A,[],2);
+meanA = mean(A,2);
 
 lambda11 = lengths(:,1).^2;
 lambda22 = lengths(:,3).^2;
-lambda12 = sqrt(lambda11.*lambda22)*cos(alphas(:,1));
+lambda12 = sqrt(lambda11.*lambda22).*cos(alphas(:,1));
 
 J = sqrt(lambda11.*lambda22.*(sin(alphas(:,1)).^2));
 
@@ -101,5 +101,5 @@ JA = J./A;
 
 fshape = sqrt(3)*J./(lambda11+lambda22-lambda12);                          % 1 if the triangle is equilateral, 0 if it's degenerate
 
-end
+return
 

@@ -186,5 +186,4 @@ meanA = mean(A,[],2);
                                                                   % Ratio of Jacobian to actual area
 JA = J./[A A A A];
 
-end
-
+return

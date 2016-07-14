@@ -110,5 +110,5 @@ while abs(fshape-obj)>=tol && it<=maxIt
     it = it + 1;
 end
 
-end
+return
 

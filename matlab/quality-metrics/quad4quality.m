@@ -78,7 +78,7 @@ lengths = [sqrt(sum(edge1.^2,2)) sqrt(sum(edge2.^2,2)) sqrt(sum(edge3.^2,2)) sqr
 
 minL = min(lengths,[],2);
 maxL = max(lengths,[],2);
-meanL = mean(lengths,[],2);
+meanL = mean(lengths,2);
                                                                    % Internal angles
 alphas = [acos(sum(edge4.*edge1,2)./(lengths(:,4).*lengths(:,1)))...
           acos(sum(-edge1.*edge2,2)./(lengths(:,1).*lengths(:,2)))...
@@ -87,14 +87,14 @@ alphas = [acos(sum(edge4.*edge1,2)./(lengths(:,4).*lengths(:,1)))...
 
 minAlpha = min(alphas,[],2);
 maxAlpha = max(alphas,[],2);
-meanAlpha = mean(alphas,[],2);
+meanAlpha = mean(alphas,2);
 
                                                                    % Diagonals' lengths
 Dlengths = [sqrt(sum(diag1.^2,2)) sqrt(sum(diag2.^2,2))];
 
 minD = min(Dlengths,[],2);
 maxD = max(Dlengths,[],2);
-meanD = mean(Dlengths,[],2);
+meanD = mean(Dlengths,2);
 
                                                                    % Angles between diagonals
 betas = acos(sum(diag1.*diag2,2)./(Dlengths(:,1).*Dlengths(:,2))).*(180/pi);
@@ -105,7 +105,7 @@ A = 0.5*(lengths(:,1).*lengths(:,4).*sin(alphas(:,1).*(pi/180))+lengths(:,2).*le
 
 minA = min(A,[],2);
 maxA = max(A,[],2);
-meanA = mean(A,[],2);
+meanA = mean(A,2);
 
 e1 = 0.25*(x1+x2+x3+x4);                                           % translation of origin along x
 e2 = 0.25*(-x1+x2+x3-x4);                                          % half length along x
@@ -134,5 +134,5 @@ JA = J./[A A A A A];
 
 fshape = 2*sqrt(sqrt(abs(edge1(:,1)*edge4(:,2)-edge1(:,2)*edge4(:,1)).*abs(edge1(:,1)*edge2(:,2)-edge1(:,2)*edge2(:,1)).*abs(edge3(:,1)*edge2(:,2)-edge3(:,2)*edge2(:,1)).*abs(edge4(:,1)*edge3(:,2)-edge4(:,2)*edge3(:,1))./((lengths(:,1).^2+lengths(:,4).^2).*(lengths(:,1).^2+lengths(:,2).^2).*(lengths(:,3).^2+lengths(:,2).^2).*(lengths(:,4).^2+lengths(:,3).^2))));
 
-end
+return
 
