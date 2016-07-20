@@ -63,11 +63,47 @@ while abs(min(fshape)-obj)>=tol && it<=maxIt
         edge2 = [elements(i,2) elements(i,3)];
         edge3 = [elements(i,1) elements(i,3)];
 
-        searchEl = [elements(1:i-1,:);elements(i+1:end,:)];
+        searchEl = elements;
+        searchEl(i,:) = [0 0 0];
         
         neigh1 = find(sum((searchEl==edge1(1))+(searchEl==edge1(2)),2)==2);
         neigh2 = find(sum((searchEl==edge2(1))+(searchEl==edge2(2)),2)==2);
         neigh3 = find(sum((searchEl==edge3(1))+(searchEl==edge3(2)),2)==2);
+        
+        if isempty(neigh1)
+            neigh1 = i;
+        end
+        if isempty(neigh2)
+            neigh2 = i;
+        end
+        if isempty(neigh3)
+            neigh3 = i;
+        end
+        
+        localEdge1 = sparse(N,4);
+        localEdge2 = sparse(N,4);
+        localEdge3 = sparse(N,4);
+        
+        localEdge1(edge1(1),1) = 1;
+        localEdge1(edge1(1),2) = 2;
+        find(elements(neigh1,:)==edge1(1))
+        localEdge1(edge1(1),3) = find(elements(neigh1,:)==edge1(1));
+        find(elements(neigh1,:)==edge1(2))
+        localEdge1(edge1(1),4) = find(elements(neigh1,:)==edge1(2));
+        
+        localEdge2(edge2(1),1) = 2;
+        localEdge2(edge2(1),2) = 3;
+        find(elements(neigh2,:)==edge2(1))
+        localEdge2(edge2(1),3) = find(elements(neigh2,:)==edge2(1));
+        find(elements(neigh2,:)==edge2(2))
+        localEdge2(edge2(1),4) = find(elements(neigh2,:)==edge2(2));
+        
+        localEdge3(edge3(2),1) = 1;
+        localEdge3(edge3(2),2) = 3;
+        find(elements(neigh3,:)==edge3(1))
+        localEdge3(edge3(2),3) = find(elements(neigh3,:)==edge3(1));
+        find(elements(neigh3,:)==edge3(2))
+        localEdge3(edge3(2),4) = find(elements(neigh3,:)==edge3(2));
         
         x1 = nodes(elements([i;neigh1;neigh2;neigh3],1),1);
         x2 = nodes(elements([i;neigh1;neigh2;neigh3],2),1);
@@ -90,18 +126,18 @@ while abs(min(fshape)-obj)>=tol && it<=maxIt
 
         minAlpha = min(alphas,[],2);
         
-        isConvex = sum([alphas(1,edge1(1))+alphas(2,edge1(1)) alphas(1,edge1(2))+alphas(2,edge1(2));...
-                    alphas(1,edge2(1))+alphas(3,edge2(1)) alphas(1,edge2(2))+alphas(3,edge2(2));...
-                    alphas(1,edge3(1))+alphas(4,edge3(1)) alphas(1,edge3(2))+alphas(4,edge3(2))]<180,2)==2;
+        isConvex = sum([alphas(1,localEdge1(edge1(1),1))+alphas(2,localEdge1(edge1(1),3)) alphas(1,localEdge1(edge1(1),2))+alphas(2,localEdge1(edge1(1),4));...
+                    alphas(1,localEdge2(edge2(1),1))+alphas(3,localEdge2(edge2(1),3)) alphas(1,localEdge2(edge2(1),2))+alphas(3,localEdge2(edge2(1),4));...
+                    alphas(1,localEdge3(edge3(2),1))+alphas(4,localEdge3(edge3(2),3)) alphas(1,localEdge3(edge3(2),2))+alphas(4,localEdge3(edge3(2),4))]<180,2)==2;
         
-        minBeforeSwap = min([minAlpha(1) minAlpha(2);minAlpha(1) minAlpha(3);minAlpha(1) minAlpha(4)],2);
+        minBeforeSwap = min([minAlpha(1) minAlpha(2);minAlpha(1) minAlpha(3);minAlpha(1) minAlpha(4)],[],2);
         
         n1 = elements(i,1);
         n2 = elements(i,2);
         n3 = elements(i,3);
-        mx = elements(neigh1,find((elements(neigh1,:)==edge1(1)+elements(neigh1,:)==edge1(2))==0));
-        px = elements(neigh2,find((elements(neigh2,:)==edge2(1)+elements(neigh2,:)==edge2(2))==0));
-        qx = elements(neigh3,find((elements(neigh3,:)==edge3(1)+elements(neigh3,:)==edge3(2))==0));
+        mx = elements(neigh1,find(((elements(neigh1,:)~=edge1(1)) + (elements(neigh1,:)~=edge1(2)))==2));
+        px = elements(neigh2,find(((elements(neigh2,:)~=edge2(1)) + (elements(neigh2,:)~=edge2(2)))==2));
+        qx = elements(neigh3,find(((elements(neigh3,:)~=edge3(1)) + (elements(neigh3,:)~=edge3(2)))==2));
         
         newelements = [n1 mx n3;...
                        mx n2 n3;...
@@ -138,7 +174,7 @@ while abs(min(fshape)-obj)>=tol && it<=maxIt
 
         minAlpha = min(alphas,[],2);
         
-        minAfterSwap = min([minAlpha(1) minAlpha(2);minAlpha(3) minAlpha(4);minAlpha(5) minAlpha(6)],2);
+        minAfterSwap = min([minAlpha(1) minAlpha(2);minAlpha(3) minAlpha(4);minAlpha(5) minAlpha(6)],[],2);
                 
         neighs = [neigh1;...
                   neigh2;...
@@ -151,7 +187,7 @@ while abs(min(fshape)-obj)>=tol && it<=maxIt
                     if minBeforeSwap(swapIndex) < minAfterSwap(swapIndex)
                         elements(i,:) = newelements(2*(swapIndex-1)+1,:);
                         elements(neighs(swapIndex),:) = newelements(2*(swapIndex-1)+2,:);
-                        edgeIndex = find(sum((edges==edgesChange(2*(swapIndex-1)+1,1)+edges==edgesChange(2*(swapIndex-1)+1,2)),2)==2);
+                        edgeIndex = find(sum(((edges==edgesChange(2*(swapIndex-1)+1,1))+(edges==edgesChange(2*(swapIndex-1)+1,2))),2)==2);
                         edges(edgeIndex,:) = edgesChange(2*(swapIndex-1)+2,:);
                     end
                 case 2
@@ -159,10 +195,10 @@ while abs(min(fshape)-obj)>=tol && it<=maxIt
                     deltaSwap = minAfterSwap(swapIndeces)-minBeforeSwap(swapIndeces);
                     [Y,index] = max(deltaSwap);
                     swapIndex = swapIndeces(index);
-                    if deltaSwap(swapIndex)>0
+                    if minBeforeSwap(swapIndex) < minAfterSwap(swapIndex)
                         elements(i,:) = newelements(2*(swapIndex-1)+1,:);
                         elements(neighs(swapIndex),:) = newelements(2*(swapIndex-1)+2,:);
-                        edgeIndex = find(sum((edges==edgesChange(2*(swapIndex-1)+1,1)+edges==edgesChange(2*(swapIndex-1)+1,2)),2)==2);
+                        edgeIndex = find(sum(((edges==edgesChange(2*(swapIndex-1)+1,1))+(edges==edgesChange(2*(swapIndex-1)+1,2))),2)==2);
                         edges(edgeIndex,:) = edgesChange(2*(swapIndex-1)+2,:);
                     end
                 case 3
@@ -171,7 +207,7 @@ while abs(min(fshape)-obj)>=tol && it<=maxIt
                     if deltaSwap(swapIndex)>0
                         elements(i,:) = newelements(2*(swapIndex-1)+1,:);
                         elements(neighs(swapIndex),:) = newelements(2*(swapIndex-1)+2,:);
-                        edgeIndex = find(sum((edges==edgesChange(2*(swapIndex-1)+1,1)+edges==edgesChange(2*(swapIndex-1)+1,2)),2)==2);
+                        edgeIndex = find(sum(((edges==edgesChange(2*(swapIndex-1)+1,1))+(edges==edgesChange(2*(swapIndex-1)+1,2))),2)==2);
                         edges(edgeIndex,:) = edgesChange(2*(swapIndex-1)+2,:);
                     end
             end
@@ -205,7 +241,7 @@ while abs(min(fshape)-obj)>=tol && it<=maxIt
     K = sparse(dof*N,dof*N);
 
     for i=1:size(elements,1)
-        K = K + nodalmaps(N,elements(i,:),dof,1,1)*k;
+        K = K + nodalmaps(N,elements(i,:),k,dof,1);
     end
 
     for i=1:length(boundary)
