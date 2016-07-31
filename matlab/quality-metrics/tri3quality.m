@@ -86,9 +86,9 @@ meanAlpha = mean(alphas,2);
 A = 0.5*lengths(:,2).*lengths(:,3).*sin(alphas(:,3).*(pi/180));
 
 
-minA = min(A,[],2);
-maxA = max(A,[],2);
-meanA = mean(A,2);
+minA = min(A);
+maxA = max(A);
+meanA = mean(A);
 
 lambda11 = lengths(:,1).^2;
 lambda22 = lengths(:,3).^2;

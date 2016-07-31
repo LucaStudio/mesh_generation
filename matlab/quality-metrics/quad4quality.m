@@ -103,9 +103,9 @@ betas = [betas 180-betas];
                                                                    % Element's area
 A = 0.5*(lengths(:,1).*lengths(:,4).*sin(alphas(:,1).*(pi/180))+lengths(:,2).*lengths(:,3).*sin(alphas(:,3).*(pi/180)));
 
-minA = min(A,[],2);
-maxA = max(A,[],2);
-meanA = mean(A,2);
+minA = min(A);
+maxA = max(A);
+meanA = mean(A);
 
 e1 = 0.25*(x1+x2+x3+x4);                                           % translation of origin along x
 e2 = 0.25*(-x1+x2+x3-x4);                                          % half length along x

@@ -1,4 +1,4 @@
-function[fshape,TD,ND,minL,maxL,meanL,minAlpha,maxAlpha,meanAlpha,A,minA,maxA,meanA,J,JA] = tri6quality(nodes,elements)
+function[fshape,TD,ND,minL,maxL,meanL,minAlpha,maxAlpha,meanAlpha,A,minA,maxA,meanA,J,JA,J1,JA1] = tri6quality(nodes,elements)
 %%
 %==============================================================================
 % Copyright (c) 2016 Université de Lorraine & Luleå tekniska universitet
@@ -126,9 +126,9 @@ A = 0.5*lengths(:,1).*lengths(:,3).*sin(alphas(:,1).*(pi/180))+...
     sign(ND(:,2)).*0.5*(lengths(:,2).*sqrt(sum([x5-x2 y5-y2].^2,2))).*sin(gammas(:,2))+...
     sign(ND(:,3)).*0.5*(lengths(:,3).*sqrt(sum([x6-x1 y6-y1].^2,2))).*sin(gammas(:,3));
 
-minA = min(A,[],2);
-maxA = max(A,[],2);
-meanA = mean(A,[],2);
+minA = min(A);
+maxA = max(A);
+meanA = mean(A);
 
                                                                            % Ratio of Jacobian to actual area
 JA = J./[A A A];
@@ -138,6 +138,8 @@ lambda22 = lengths(:,3).^2;
 lambda12 = sqrt(lambda11.*lambda22)*cos(alphas(:,1));
 
 J1 = sqrt(lambda11.*lambda22.*(sin(alphas(:,1)).^2));
+
+JA1 = J1./A;
 
 fshape = sqrt(3)*J1./(lambda11+lambda22-lambda12);                          % 1 if the triangle is equilateral, 0 if it's degenerate
 

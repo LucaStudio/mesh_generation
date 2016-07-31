@@ -179,9 +179,9 @@ A = 0.5*(lengths(:,1).*lengths(:,4).*sin(alphas(:,1).*(pi/180))+lengths(:,2).*le
     sign(ND(:,3)).*0.5*(lengths(:,3).*sqrt(sum([x7-x4 y7-y4].^2,2))).*sin(gammas(:,3))+...
     sign(ND(:,4)).*0.5*(lengths(:,4).*sqrt(sum([x8-x1 y8-y1].^2,2))).*sin(gammas(:,4));
 
-minA = min(A,[],2);
-maxA = max(A,[],2);
-meanA = mean(A,[],2);
+minA = min(A);
+maxA = max(A);
+meanA = mean(A);
 
                                                                   % Ratio of Jacobian to actual area
 JA = J./[A A A A];
