@@ -132,7 +132,7 @@ J = [f3.^2.*ar...                                                  %    central 
                                                                    % Ratio of Jacobian to actual area
 JA = J./[A A A A A];
 
-fshape = 2*sqrt(sqrt(abs(edge1(:,1)*edge4(:,2)-edge1(:,2)*edge4(:,1)).*abs(edge1(:,1)*edge2(:,2)-edge1(:,2)*edge2(:,1)).*abs(edge3(:,1)*edge2(:,2)-edge3(:,2)*edge2(:,1)).*abs(edge4(:,1)*edge3(:,2)-edge4(:,2)*edge3(:,1))./((lengths(:,1).^2+lengths(:,4).^2).*(lengths(:,1).^2+lengths(:,2).^2).*(lengths(:,3).^2+lengths(:,2).^2).*(lengths(:,4).^2+lengths(:,3).^2))));
+fshape = 2*sqrt(sqrt(abs(edge1(:,1).*edge4(:,2)-edge1(:,2).*edge4(:,1)).*abs(edge1(:,1).*edge2(:,2)-edge1(:,2).*edge2(:,1)).*abs(edge3(:,1).*edge2(:,2)-edge3(:,2).*edge2(:,1)).*abs(edge4(:,1).*edge3(:,2)-edge4(:,2).*edge3(:,1))./((lengths(:,1).^2+lengths(:,4).^2).*(lengths(:,1).^2+lengths(:,2).^2).*(lengths(:,3).^2+lengths(:,2).^2).*(lengths(:,4).^2+lengths(:,3).^2))));
 
 return
 
