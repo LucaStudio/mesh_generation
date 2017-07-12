@@ -1,4 +1,4 @@
-function[section]=homogeneousDilation2D(section,f)
+function[section]=homogeneousCylindricalDilation3D(section,f)
 %%
 %==============================================================================
 % Copyright (c) 2016 Université de Lorraine & Luleå tekniska universitet

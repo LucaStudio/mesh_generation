@@ -69,26 +69,26 @@ if abs(region.boundingRect.center(1)-region.c1(1))>lx
     lx = abs(region.boundingRect.center(1)-region.c1(1));
 end
 if abs(region.boundingRect.center(1)-region.c2(1))>lx
-    lx = abs(region.boundingRect.center(1)-region.c1(1));
+    lx = abs(region.boundingRect.center(1)-region.c2(1));
 end
 if abs(region.boundingRect.center(1)-region.c3(1))>lx
-    lx = abs(region.boundingRect.center(1)-region.c1(1));
+    lx = abs(region.boundingRect.center(1)-region.c3(1));
 end
 if abs(region.boundingRect.center(1)-region.c4(1))>lx
-    lx = abs(region.boundingRect.center(1)-region.c1(1));
+    lx = abs(region.boundingRect.center(1)-region.c4(1));
 end
 
 if abs(region.boundingRect.center(2)-region.c1(2))>ly
     ly = abs(region.boundingRect.center(2)-region.c1(2));
 end
 if abs(region.boundingRect.center(2)-region.c2(2))>ly
-    ly = abs(region.boundingRect.center(2)-region.c1(2));
+    ly = abs(region.boundingRect.center(2)-region.c2(2));
 end
 if abs(region.boundingRect.center(2)-region.c3(2))>ly
-    ly = abs(region.boundingRect.center(2)-region.c1(2));
+    ly = abs(region.boundingRect.center(2)-region.c3(2));
 end
 if abs(region.boundingRect.center(2)-region.c4(2))>ly
-    ly = abs(region.boundingRect.center(2)-region.c1(2));
+    ly = abs(region.boundingRect.center(2)-region.c4(2));
 end
 
 for i=1:length(region.e1)

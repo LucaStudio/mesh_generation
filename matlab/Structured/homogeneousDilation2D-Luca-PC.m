@@ -58,23 +58,20 @@ section.dilatedBoundary.c4 = [xC+f*cos(atan2(section.c4(2)-yC,section.c4(1)-xC))
 
 section.dilatedBoundary.e1 = zeros(length(section.e1),2);
 for i=1:length(section.e1)
-    section.dilatedBoundary.e1(i,:) = [xC+f*cos(atan2(section.e1(i,2)-yC,section.e1(i,1)-xC))*computeDistance2D(section.e1(i),section.boundingCircle.center) ...
-                                       yC+f*sin(atan2(section.e1(i,2)-yC,section.e1(i,1)-xC))*computeDistance2D(section.e1(i),section.boundingCircle.center)];
+    section.dilatedBoundary.e1(i,:) = [xC+f*cos(atan2(section.c1(2)-yC,section.c1(1)-xC))*computeDistance2D(section.c1,section.boundingCircle.center) ...
+                              yC+f*sin(atan2(section.c1(2)-yC,section.c1(1)-xC))*computeDistance2D(section.c1,section.boundingCircle.center)];
 end
 section.dilatedBoundary.e2 = zeros(length(section.e2),2);
 for i=1:length(section.e2)
-    section.dilatedBoundary.e2(i,:) = [xC+f*cos(atan2(section.e2(i,2)-yC,section.e2(i,1)-xC))*computeDistance2D(section.e2(i),section.boundingCircle.center) ...
-                                       yC+f*sin(atan2(section.e2(i,2)-yC,section.e2(i,1)-xC))*computeDistance2D(section.e2(i),section.boundingCircle.center)];
+    
 end
 section.dilatedBoundary.e3 = zeros(length(section.e3),2);
 for i=1:length(section.e3)
-    section.dilatedBoundary.e3(i,:) = [xC+f*cos(atan2(section.e3(i,2)-yC,section.e3(i,1)-xC))*computeDistance2D(section.e3(i),section.boundingCircle.center) ...
-                                       yC+f*sin(atan2(section.e3(i,2)-yC,section.e3(i,1)-xC))*computeDistance2D(section.e3(i),section.boundingCircle.center)];
+    
 end
 section.dilatedBoundary.e4 = zeros(length(section.e4),2);
 for i=1:length(section.e4)
-    section.dilatedBoundary.e4(i,:) = [xC+f*cos(atan2(section.e4(i,2)-yC,section.e4(i,1)-xC))*computeDistance2D(section.e4(i),section.boundingCircle.center) ...
-                                       yC+f*sin(atan2(section.e4(i,2)-yC,section.e4(i,1)-xC))*computeDistance2D(section.e4(i),section.boundingCircle.center)];
+    
 end
 
 return
