@@ -1,4 +1,4 @@
-function[section]=meshGenCurvSec(section)
+function[section]=meshGenCurvSec(section,elType,elOrder,optimized)
 %%
 %==============================================================================
 % Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
@@ -36,6 +36,9 @@ function[section]=meshGenCurvSec(section)
 %  A function to generate a structured mesh of a section with a generic
 %  curvilinear boundary
 %
+%  elType = 1 for quads, elType = 2 for tris
+%  elOrder = 1 for linear, elOrder = 2 for quadratic, elOrder = 3 for cubic elements
+%
 %  Output:
 %
 %%
@@ -50,9 +53,12 @@ e2 = section.e2;
 e3 = section.e3;
 e4 = section.e4;
 
-N1 = length(section.e1)+1;
-N2 = length(section.e2)+1;
+N1 = length(section.e1)+1; % for n-th order elements, this is n times the final number of higher-order elements
+N2 = length(section.e2)+1; % for n-th order elements, this is n times the final number of higher-order elements
 
+% nodes are always generated as belonging to a mesh of 1st order quadrilaterals
+% for higher order elements, internal nodes are then filtered out
+% for triangular elements, edges are added and elements formed accordingly
 itmax = section.itmax;
 tol = section.tol;
 
@@ -70,6 +76,61 @@ mesh = transfiniteinterpolation2D((N1+1)*(N2+1),mesh(:,1:2),c1(1),c2(1),c1(2),c4
 %lattice=sparseellipticgridgen2D(Nx,N,lattice,deltaq,flagperiodicity,periodicity,indicesbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesC1,indicesC2,indicesC3,indicesC4,firstdevneighbours,itmax,tol,spyflag)
 mesh = sparseellipticgridgen2D(N1+1,(N1+1)*(N2+1),mesh,[(c2(1)-c1(1))/N1,(c4(2)-c1(2))/N2],0,0,indicesbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesC1,indicesC2,indicesC3,indicesC4,firstdevneighbours,itmax,tol,0);
 
-section.mesh = mesh;
+if elType==1 && elOrder==1
+  section.nodes = mesh(:,3:4);
+
+  edges = zeros(2*N1*N2+N1+N2,2);
+
+  elements = zeros(N1*N2,4);
+
+  for j=1:N2
+    edges((j-1)*2*N1+1:(j-1)*2*N1+N1,1) = (j-1)*(N1+1) + (1:N1)';
+    edges((j-1)*2*N1+1:(j-1)*2*N1+N1,2) = (j-1)*(N1+1) + (2:N1+1)';
+    edges((j-1)*2*N1+N1+1:(j-1)*2*N1+2*N1,1) = (j-1)*(N1+1) + (1:N1)';
+    edges((j-1)*2*N1+N1+1:(j-1)*2*N1+2*N1,2) = j*(N1+1) + (1:N1)';
+  end
+
+  edges(2*N1*N2+1:2*N1*N2+N1,1) = N2*(N1+1) + (1:N1)';
+  edges(2*N1*N2+1:2*N1*N2+N1,2) = N2*(N1+1) + (2:N1+1)';
+
+  edges(2*N1*N2+N1+1:2*N1*N2+N1+N2,1) = ((N1+1):(N1+1):N2*(N1+1))';
+  edges(2*N1*N2+N1+1:2*N1*N2+N1+N2,2) = (2*(N1+1):(N1+1):(N2+1)*(N1+1))';
+
+  for j=1:N2
+    elements((j-1)*N1+1:j*N1,1) = (j-1)*(N1+1) + (1:N1)';
+    elements((j-1)*N1+1:j*N1,2) = (j-1)*(N1+1) + (2:N1+1)';
+    elements((j-1)*N1+1:j*N1,3) = j*(N1+1) + (2:N1+1)';
+    elements((j-1)*N1+1:j*N1,4) = j*(N1+1) + (1:N1)';
+  end
+
+  section.edges = edges;
+  section.elements = elements;
+
+elseif elType==1 && elOrder==2
+  N1equiv1order = N1;
+  N2equiv1order = N2;
+
+  N1 = N1equiv1order/2; % number of element of one side of 1st order equivalent mesh = n times the number of elements in the higher order mesh, where n is the elements' order
+  N2 = N2equiv1order/2;
+
+  effMesh = zeros(N2*(3*N1+2)+2*N1+1,2);
+
+  for j=1:N2
+
+  end
+
+  edges = zeros(4*N1*N2+2*N1+2*N2,2);
+
+  elements = zeros(N1*N2,4);
+elseif elType==2 && elOrder==1
+  edges = zeros(3*N1*N2+N1+N2,2);
+
+  elements = zeros(2*N1*N2,4);
+elseif elType==2 && elOrder==2
+  edges = zeros(6*N1*N2+2*N1+2*N2,2);
+
+  elements = zeros(2*N1*N2,4);
+end
+
 
 return
