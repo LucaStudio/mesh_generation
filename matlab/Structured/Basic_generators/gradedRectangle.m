@@ -1,24 +1,24 @@
-function[mesh] = gradedRectangle(x0,y0,lx,ly,Nx,Ny)
+function[mesh] = gradedRectangle(logfullfile,x0,y0,lx,ly,Nx,Ny)
 
 %%
 %==============================================================================
-% Copyright (c) 2016 Université de Lorraine & Luleå tekniska universitet
+% Copyright (c) 2016 Universitï¿½ de Lorraine & Luleï¿½ tekniska universitet
 % Author: Luca Di Stasio <luca.distasio@gmail.com>
 %                        <luca.distasio@ingpec.eu>
 %
 % Redistribution and use in source and binary forms, with or without
 % modification, are permitted provided that the following conditions are met:
-% 
-% 
+%
+%
 % Redistributions of source code must retain the above copyright
 % notice, this list of conditions and the following disclaimer.
 % Redistributions in binary form must reproduce the above copyright
 % notice, this list of conditions and the following disclaimer in
 % the documentation and/or other materials provided with the distribution
-% Neither the name of the Université de Lorraine or Luleå tekniska universitet
+% Neither the name of the Universitï¿½ de Lorraine or Luleï¿½ tekniska universitet
 % nor the names of its contributors may be used to endorse or promote products
 % derived from this software without specific prior written permission.
-% 
+%
 % THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 % AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 % IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,7 +33,7 @@ function[mesh] = gradedRectangle(x0,y0,lx,ly,Nx,Ny)
 %==============================================================================
 %
 %  DESCRIPTION
-%  
+%
 %  A function to create a regular mesh of quadrilaterals in a rectangular
 %  geometry with n zones with different element size
 %
@@ -49,50 +49,143 @@ function[mesh] = gradedRectangle(x0,y0,lx,ly,Nx,Ny)
 %
 %%
 
-M = size(Nx,1);
-N = size(Ny,1);
+writeToLogFile(logfullfile,'In function: gradedRectangle\n')
 
-deltax = lx./Nx;
-deltay = ly./Ny;
-
-nodesx = zeros(M+1,1);
-nodesy = zeros(N+1,1);
-
-nodesx(1) = x0-0.5*sum(lx);
-nodesy(1) = y0-0.5*sum(ly);
-
-for m=2:M+1
-   nodesx(m) = nodesx(m-1) + lx(m-1);  
+% Get size of vectors M and N
+writeToLogFile(logfullfile,'Getting size of vectors M and N ...\n')
+try
+  M = size(Nx,1);
+  N = size(Ny,1);
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
 end
+writeToLogFile(logfullfile,['... done.','\n'])
 
-for n=2:N+1
-   nodesy(n) = nodesy(n-1) + ly(n-1);  
+% Calculate elements' side lengths
+writeToLogFile(logfullfile,'Calculating elements'' side lengths ...\n')
+try
+  deltax = lx./Nx;
+  deltay = ly./Ny;
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
 end
+writeToLogFile(logfullfile,['... done.','\n'])
 
-xs = [];
-ys = [];
-
-for m=1:M
-    addVec = (nodesx(m):deltax(m):nodesx(m+1))';
-    xs = [xs;...
-         addVec(1:end-1)];
+% Initialize vectors of x coordinates and y coordinates
+writeToLogFile(logfullfile,'Initializing vectors of x coordinates and y coordinates ...\n')
+try
+  nodesx = zeros(M+1,1);
+  nodesy = zeros(N+1,1);
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
 end
-xs = [xs;...
-      x0+0.5*sum(lx)];
-     
-for n=1:N
-    addVec = (nodesy(n):deltay(n):nodesy(n+1))';
-    ys = [ys;...
-         addVec(1:end-1)]; 
-end
-ys = [ys;...
-      y0+0.5*sum(ly)];
+writeToLogFile(logfullfile,['... done.','\n'])
 
-mesh = zeros((sum(Nx)+1)*(sum(Ny)+1),2);
-
-for j=1:(sum(Ny)+1)
-    mesh((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),1) = xs;
-    mesh((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),2) = ys(j)*ones((sum(Nx)+1),1);
+% Calculate the position of S(outh)-E(ast) node
+writeToLogFile(logfullfile,'Calculating the position of S(outh)-E(ast) node ...\n')
+try
+  nodesx(1) = x0-0.5*sum(lx);
+  nodesy(1) = y0-0.5*sum(ly);
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
 end
+writeToLogFile(logfullfile,['... done.','\n'])
+
+% Fill the vector of x coordinates
+writeToLogFile(logfullfile,'Filling the vector of x coordinates ...\n')
+try
+  for m=2:M+1
+     nodesx(m) = nodesx(m-1) + lx(m-1);
+  end
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
+writeToLogFile(logfullfile,['... done.','\n'])
+
+% Fill the vector of y coordinates
+writeToLogFile(logfullfile,'Filling the vector of y coordinates ...\n')
+try
+  for n=2:N+1
+     nodesy(n) = nodesy(n-1) + ly(n-1);
+  end
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
+writeToLogFile(logfullfile,['... done.','\n'])
+
+% Initialize temporary vectors of coordinates
+writeToLogFile(logfullfile,'Initializing temporary vectors of coordinates ...\n')
+try
+  xs = [];
+  ys = [];
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
+writeToLogFile(logfullfile,['... done.','\n'])
+
+% Fill temporary vectors of coordinates
+writeToLogFile(logfullfile,'Filling temporary vectors of coordinates ...\n')
+try
+  for m=1:M
+      addVec = (nodesx(m):deltax(m):nodesx(m+1))';
+      xs = [xs;...
+           addVec(1:end-1)];
+  end
+  xs = [xs;...
+        x0+0.5*sum(lx)];
+  for n=1:N
+      addVec = (nodesy(n):deltay(n):nodesy(n+1))';
+      ys = [ys;...
+           addVec(1:end-1)];
+  end
+  ys = [ys;...
+        y0+0.5*sum(ly)];
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
+writeToLogFile(logfullfile,['... done.','\n'])
+
+% Initialize matrix containing mesh data
+writeToLogFile(logfullfile,'Initializing matrix containing mesh data ...\n')
+try
+  mesh = zeros((sum(Nx)+1)*(sum(Ny)+1),2);
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
+writeToLogFile(logfullfile,['... done.','\n'])
+
+% Fill matrix containing mesh data
+writeToLogFile(logfullfile,'Filling matrix containing mesh data ...\n')
+try
+  for j=1:(sum(Ny)+1)
+      mesh((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),1) = xs;
+      mesh((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),2) = ys(j)*ones((sum(Nx)+1),1);
+  end
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
+writeToLogFile(logfullfile,['... done.','\n'])
+
+writeToLogFile(logfullfile,'Exiting function: gradedRectangle\n')
 
 return
