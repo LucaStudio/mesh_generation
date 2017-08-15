@@ -1,4 +1,4 @@
-function[nodes,elements,edges]=meshGenRectHolesGradedRect(logfullfile,elType,elOrder,x0,y0,lx,ly,Nx,Ny,holes)
+function[nodes,elements,edges]=higherOrderGradedRectangle(logfullfile,latexFolder,elType,elOrder,x0,y0,lx,ly,Nx,Ny,holes)
 %%
 %==============================================================================
 % Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
@@ -33,8 +33,12 @@ function[nodes,elements,edges]=meshGenRectHolesGradedRect(logfullfile,elType,elO
 %
 %  DESCRIPTION
 %
-%  A function to mesh a non-simply connected, i.e. with rectangular holes,
-%  rectangular geometry with rectangular elements
+%  A function to mesh a simply connected 2D rectangular geometry with elements of
+%  shape and order of choice
+%
+%  Available:
+%  - 1st and 2nd order quads
+%  - 1st and 2nd order tris
 %
 %  Input: x0 - scalar - x-coordinate of center
 %         y0 - scalar - y-coordinate of center
@@ -93,8 +97,12 @@ writeToLogFile(logfullfile,['... done.','\n'])
 writeToLogFile(logfullfile,'Filtering nodes if elements are not linear quadrilaterals ...\n')
 try
   if strcomp(elType,'quads') || strcomp(elType,'quad') || strcomp(elType,'quadrilaterals') || strcomp(elType,'quadrilateral')
-    if strcomp(elType,'second') || strcomp(elType,'Second') || strcomp(elType,'2nd') || strcomp(elType,'2')
+    if strcomp(elType,'first') || strcomp(elType,'First') || strcomp(elType,'1st') || strcomp(elType,'1')
+        edges = zeros();
+        elements = 
+    elseif strcomp(elType,'second') || strcomp(elType,'Second') || strcomp(elType,'2nd') || strcomp(elType,'2')
       filteredNodes = zeros((3*sum(Nx)+2)*sum(Ny)+2*sum(Nx)+1,2);
+
       for j=1:sum(Ny)
         filteredNodes((j-1)*(3*sum(Nx)+2)+1:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1,1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1,1:2);
         filteredNodes((j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1+1:j*(3*sum(Nx)+2),1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1+1:2:2*j*(sum(NxEquiv)+1),1:2);
@@ -114,14 +122,10 @@ catch ME
 end
 writeToLogFile(logfullfile,['... done.','\n'])
 
-baseNodes = [(1:length(baseNodes))' baseNodes];
 
-baseElements = zeros();
-
-for j=1:sum(Ny)+1
-
-end
 
 writeToLogFile(logfullfile,'Exiting function: meshGenRectHolesGradedRect\n')
+
+
 
 return
