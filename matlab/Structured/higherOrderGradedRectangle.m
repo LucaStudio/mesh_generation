@@ -1,4 +1,7 @@
-function[nodes,elements,edges]=higherOrderGradedRectangle(logfullfile,latexFolder,elType,elOrder,x0,y0,lx,ly,Nx,Ny,holes)
+function[nodes,elements,edges,...
+         nodesSWcorner,nodesSEcorner,nodesNEcorner,nodesNWcorner,nodesSOUTHside,nodesEASTside,nodesNORTHside,nodesWESTside,...
+         edgesSOUTHside,edgesEASTside,edgesNORTHside,edgesWESTside,...
+         elementsSWcorner,elementsSEcorner,elementsNEcorner,elementsNWcorner,elementsSOUTHside,elementsEASTside,elementsNORTHside,elementsWESTside]=higherOrderGradedRectangle(logfullfile,latexFolder,elType,elOrder,isCircular,circularity,x0,y0,lx,ly,Nx,Ny)
 %%
 %==============================================================================
 % Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
@@ -53,24 +56,26 @@ function[nodes,elements,edges]=higherOrderGradedRectangle(logfullfile,latexFolde
 %                                  yL - scalar - half-length of side parallel to y-axis
 %%
 
-writeToLogFile(logfullfile,'In function: meshGenRectHolesGradedRect\n')
+writeToLogFile(logfullfile,'In function: higherOrderGradedRectangle\n')
+writeToLogFile(logfullfile,'\nStarting timer\n')
+start = tic;
 
 % calculate equivalent number of linear quadrilateral elements depending on type and order of elements chosen
 writeToLogFile(logfullfile,'Calculating equivalent number of linear quadrilateral elements based on type and order of elements chosen ...\n')
 try
   if strcomp(elType,'quads') || strcomp(elType,'quad') || strcomp(elType,'quadrilaterals') || strcomp(elType,'quadrilateral')
-    if strcomp(elType,'first') || strcomp(elType,'First') || strcomp(elType,'1st') || strcomp(elType,'1')
+    if strcomp(elOrder,'first') || strcomp(elOrder,'First') || strcomp(elOrder,'1st') || strcomp(elOrder,'1')
       NxEquiv = Nx;
       NyEquiv = Ny;
-    elseif strcomp(elType,'second') || strcomp(elType,'Second') || strcomp(elType,'2nd') || strcomp(elType,'2')
+    elseif strcomp(elOrder,'second') || strcomp(elOrder,'Second') || strcomp(elOrder,'2nd') || strcomp(elOrder,'2')
       NxEquiv = 2*Nx;
       NyEquiv = 2*Ny;
     end
   elseif strcomp(elType,'tris') || strcomp(elType,'tri') || strcomp(elType,'triangles') || strcomp(elType,'triangle')
-    if strcomp(elType,'first') || strcomp(elType,'First') || strcomp(elType,'1st') || strcomp(elType,'1')
+    if strcomp(elOrder,'first') || strcomp(elOrder,'First') || strcomp(elOrder,'1st') || strcomp(elOrder,'1')
       NxEquiv = Nx;
       NyEquiv = Ny;
-    elseif strcomp(elType,'second') || strcomp(elType,'Second') || strcomp(elType,'2nd') || strcomp(elType,'2')
+    elseif strcomp(elOrder,'second') || strcomp(elOrder,'Second') || strcomp(elOrder,'2nd') || strcomp(elOrder,'2')
       NxEquiv = 2*Nx;
       NyEquiv = 2*Ny;
     end
@@ -95,8 +100,14 @@ writeToLogFile(logfullfile,['... done.','\n'])
 
 % filter nodes if elements are not linear quadrilaterals
 writeToLogFile(logfullfile,'Filtering nodes if elements are not linear quadrilaterals ...\n')
+writeToLogFile(logfullfile,['Calling function ', 'filterRectangularMesh',' ...\n']);
 try
-  
+  nodes,elements,edges,...
+  nodesSWcorner,nodesSEcorner,nodesNEcorner,nodesNWcorner,nodesSOUTHside,nodesEASTside,nodesNORTHside,nodesWESTside,...
+  edgesSOUTHside,edgesEASTside,edgesNORTHside,edgesWESTside,...
+  elementsSWcorner,elementsSEcorner,elementsNEcorner,elementsNWcorner,elementsSOUTHside,elementsEASTside,elementsNORTHside,elementsWESTside=filterRectangularMesh(logfullfile,latexFolder,...
+                                                                                                                                                                   elType,elOrder,Nx,Ny,NxEquiv,NyEquiv,...
+                                                                                                                                                                   baseNodes,isCircular,circularity)
 catch ME
   writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
   writeToLogFile(logfullfile,['Terminating program.','\n'])
@@ -105,8 +116,10 @@ end
 writeToLogFile(logfullfile,['... done.','\n'])
 
 
-
-writeToLogFile(logfullfile,'Exiting function: meshGenRectHolesGradedRect\n')
+elapsed = toc(start);
+writeToLogFile(logfullfile,'Timer stopped.\n')
+writeToLogFile(logfullfile,['\nELAPSED WALLCLOCK TIME: ', num2str(elapsed),' [s]\n\n'])
+writeToLogFile(logfullfile,'Exiting function: higherOrderGradedRectangle\n')
 
 
 

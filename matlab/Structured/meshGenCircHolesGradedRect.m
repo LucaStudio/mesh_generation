@@ -1,4 +1,4 @@
-function[nodes,elements,edges]=meshGenRectHolesGradedRect(logfullfile,elType,elOrder,x0,y0,lx,ly,Nx,Ny,holes)
+function[nodes,elements,edges]=meshGenCircHolesGradedRect(logfullfile,elType,elOrder,x0,y0,lx,ly,Nx,Ny,holes)
 %%
 %==============================================================================
 % Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
@@ -49,7 +49,7 @@ function[nodes,elements,edges]=meshGenRectHolesGradedRect(logfullfile,elType,elO
 %                                  yL - scalar - half-length of side parallel to y-axis
 %%
 
-writeToLogFile(logfullfile,'In function: meshGenRectHolesGradedRect\n')
+writeToLogFile(logfullfile,'In function: meshGenCircHolesGradedRect\n')
 writeToLogFile(logfullfile,'\nStarting timer\n')
 start = tic;
 
@@ -60,6 +60,6 @@ start = tic;
 elapsed = toc(start);
 writeToLogFile(logfullfile,'Timer stopped.\n')
 writeToLogFile(logfullfile,['\nELAPSED WALLCLOCK TIME: ', num2str(elapsed),' [s]\n\n'])
-writeToLogFile(logfullfile,'Exiting function: meshGenRectHolesGradedRect\n')
+writeToLogFile(logfullfile,'Exiting function: meshGenCircHolesGradedRect\n')
 
 return
