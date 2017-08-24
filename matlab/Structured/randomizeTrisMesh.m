@@ -1,4 +1,4 @@
-function[nodes,elements,edges]=randomizeTrisMesh(logfullfile,elOrder,baseNodes,baseElements,baseEdges)
+function[baseNodes,baseEdges]=randomizeTrisMesh(logfullfile,baseNodes,iterations,baseEdges,fixedNodes)
 %%
 %==============================================================================
 % Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
@@ -36,7 +36,7 @@ function[nodes,elements,edges]=randomizeTrisMesh(logfullfile,elOrder,baseNodes,b
 %  A function to mesh a non-simply connected, i.e. with rectangular holes,
 %  rectangular geometry with rectangular elements
 %
-%  Input:
+%  Input: baseNodes - N x 3 matrix - for each node, an integer label, x and y coordinates are given
 %
 %%
 
@@ -44,9 +44,55 @@ writeToLogFile(logfullfile,'In function: randomizeTrisMesh\n')
 writeToLogFile(logfullfile,'\nStarting timer\n')
 start = tic;
 
-% creating rectangular mesh
-
-% define holes
+if length(baseEdges(0,:))==2
+  for n=1:iterations
+    for i=1:length(baseNodes)
+      if isempty(find(fixedNodes==baseNodes(i,1)))
+        [edgeIndeces,vertexIndexes]=find(baseEdges==baseNodes(i,1));
+        vertexIndexes = mod(vertexIndexes,2) + 1;
+        R = -1;
+        for j=1:length(edgeIndeces)
+          r = sqrt((baseNodes(baseNodes(i,1),2)-baseNodes(baseEdges(edgeIndeces(j),vertexIndexes(j)),2))^2+(baseNodes(baseNodes(i,1),3)-baseNodes(baseEdges(edgeIndeces(j),vertexIndexes(j)),3))^2);
+          if R<0
+            R = r;
+          elseif r<R
+            R = r;
+          end
+        end
+        rFac = rand();
+        thetaFac = rand();
+        baseNodes(i,2) = baseNodes(i,2) + rFac*R*cos(thetaFac*2*pi);
+        baseNodes(i,3) = baseNodes(i,3) + rFac*R*sin(thetaFac*2*pi);
+      end
+    end
+  end
+else
+  for n=1:iterations
+    for i=1:length(baseNodes)
+      if isempty(find(fixedNodes==baseNodes(i,1)))
+        [edgeIndeces,vertexIndexes]=find(baseEdges==baseNodes(i,1));
+        vertexIndexes = mod(vertexIndexes,2) + 1;
+        R = -1;
+        for j=1:length(edgeIndeces)
+          for k=1:length(baseEdges(edgeIndeces(j),:))
+            if k~=vertexIndexes(j)
+              r = sqrt((baseNodes(baseNodes(i,1),2)-baseNodes(baseEdges(edgeIndeces(j),k),2))^2+(baseNodes(baseNodes(i,1),3)-baseNodes(baseEdges(edgeIndeces(j),k),3))^2);
+              if R<0
+                R = r;
+              elseif r<R
+                R = r;
+              end
+            end
+          end
+        end
+        rFac = rand();
+        thetaFac = rand();
+        baseNodes(i,2) = baseNodes(i,2) + rFac*R*cos(thetaFac*2*pi);
+        baseNodes(i,3) = baseNodes(i,3) + rFac*R*sin(thetaFac*2*pi);
+      end
+    end
+  end
+end
 
 elapsed = toc(start);
 writeToLogFile(logfullfile,'Timer stopped.\n')

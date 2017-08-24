@@ -54,6 +54,10 @@ writeToLogFile(logfullfile,'\nStarting timer\n')
 start = tic;
 
 % creating rectangular mesh
+[nodes,elements,edges,...
+ nodesSWcorner,nodesSEcorner,nodesNEcorner,nodesNWcorner,nodesSOUTHside,nodesEASTside,nodesNORTHside,nodesWESTside,...
+ edgesSOUTHside,edgesEASTside,edgesNORTHside,edgesWESTside,...
+ elementsSWcorner,elementsSEcorner,elementsNEcorner,elementsNWcorner,elementsSOUTHside,elementsEASTside,elementsNORTHside,elementsWESTside]=higherOrderGradedRectangle(logfullfile,latexFolder,elType,elOrder,isCircular,circularity,x0,y0,lx,ly,Nx,Ny);
 
 % define holes
 
