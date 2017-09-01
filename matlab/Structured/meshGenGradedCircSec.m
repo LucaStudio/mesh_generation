@@ -51,6 +51,18 @@ writeToLogFile(logfullfile,'In function: meshGenGradedCircSec\n')
 writeToLogFile(logfullfile,'\nStarting timer\n')
 start = tic;
 
+% compute parameters for the reference rectangle
+writeToLogFile(logfullfile,['Compute parameters for the reference rectangular mesh ...','\n'])
+try
+
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
+writeToLogFile(logfullfile,['... done.','\n'])
+
+
 % calculate equivalent number of linear quadrilateral elements depending on type and order of elements chosen
 writeToLogFile(logfullfile,'Calculating equivalent number of linear quadrilateral elements based on type and order of elements chosen ...\n')
 try
