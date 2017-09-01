@@ -1,4 +1,4 @@
-function[nodes,elements,edges]=meshGenGradedCircSec(logfullfile,elType,elOrder,x0,y0,lx,ly,Nx,Ny,holes)
+function[nodes,elements,edges]=meshGenGradedCircSec(logfullfile,elType,elOrder,x0,y0,R,thetas,deltas)
 %%
 %==============================================================================
 % Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
@@ -33,33 +33,78 @@ function[nodes,elements,edges]=meshGenGradedCircSec(logfullfile,elType,elOrder,x
 %
 %  DESCRIPTION
 %
-%  A function to mesh a non-simply connected, i.e. with rectangular holes,
-%  rectangular geometry with rectangular elements
+%  A function to mesh a simply connected 2D rectangular geometry with elements of
+%  shape and order of choice
+%
+%  Available:
+%  - 1st and 2nd order quads
+%  - 1st and 2nd order tris
 %
 %  Input: x0 - scalar - x-coordinate of center
 %         y0 - scalar - y-coordinate of center
-%         lx - [M x 1] vector - Side length in each one of the M mesh regions in x-direction
-%         ly - [N x 1] vector - Side length in each one of the N mesh regions in y-direction
-%         Nx - [M x 1] vector - Number of ELEMENTS in each one of the M mesh regions in x-direction
-%         Ny - [N x 1] vector - Number of ELEMENTS in each one of the N mesh regions in y-direction
-%         holes - [H x 4] matrix - H is the number of holes; for each hole the following data must pe provided:
-%                                  xC - scalar - x-coordinate of hole's center
-%                                  yC - scalar - y-coordinate of hole's center
-%                                  xL - scalar - half-length of side parallel to x-axis
-%                                  yL - scalar - half-length of side parallel to y-axis
+%         R  - scalar - Radius
+%         thetas - [M x 1] vector - Angular aperture of each one of the M mesh regions in each 90° section with wich the circle is mapped to a square
+%         deltas - [M x 1] vector - Number of ELEMENTS in each one of the M mesh regions in x-direction
 %%
 
 writeToLogFile(logfullfile,'In function: meshGenGradedCircSec\n')
 writeToLogFile(logfullfile,'\nStarting timer\n')
 start = tic;
 
-% creating rectangular mesh
-[nodes,elements,edges,...
- nodesSWcorner,nodesSEcorner,nodesNEcorner,nodesNWcorner,nodesSOUTHside,nodesEASTside,nodesNORTHside,nodesWESTside,...
- edgesSOUTHside,edgesEASTside,edgesNORTHside,edgesWESTside,...
- elementsSWcorner,elementsSEcorner,elementsNEcorner,elementsNWcorner,elementsSOUTHside,elementsEASTside,elementsNORTHside,elementsWESTside]=higherOrderGradedRectangle(logfullfile,latexFolder,elType,elOrder,isCircular,circularity,x0,y0,lx,ly,Nx,Ny);
+% calculate equivalent number of linear quadrilateral elements depending on type and order of elements chosen
+writeToLogFile(logfullfile,'Calculating equivalent number of linear quadrilateral elements based on type and order of elements chosen ...\n')
+try
+  if strcomp(elType,'quads') || strcomp(elType,'quad') || strcomp(elType,'quadrilaterals') || strcomp(elType,'quadrilateral')
+    if strcomp(elOrder,'first') || strcomp(elOrder,'First') || strcomp(elOrder,'1st') || strcomp(elOrder,'1')
+      NxEquiv = Nx;
+      NyEquiv = Ny;
+    elseif strcomp(elOrder,'second') || strcomp(elOrder,'Second') || strcomp(elOrder,'2nd') || strcomp(elOrder,'2')
+      NxEquiv = 2*Nx;
+      NyEquiv = 2*Ny;
+    end
+  elseif strcomp(elType,'tris') || strcomp(elType,'tri') || strcomp(elType,'triangles') || strcomp(elType,'triangle')
+    if strcomp(elOrder,'first') || strcomp(elOrder,'First') || strcomp(elOrder,'1st') || strcomp(elOrder,'1')
+      NxEquiv = Nx;
+      NyEquiv = Ny;
+    elseif strcomp(elOrder,'second') || strcomp(elOrder,'Second') || strcomp(elOrder,'2nd') || strcomp(elOrder,'2')
+      NxEquiv = 2*Nx;
+      NyEquiv = 2*Ny;
+    end
+  end
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
+writeToLogFile(logfullfile,['... done.','\n'])
 
-% define holes
+% create equivalent mesh with linear quadrilateral elements
+writeToLogFile(logfullfile,['Creating equivalent mesh with linear quadrilateral elements ...','\n'])
+try
+  baseNodes = gradedRectangle(logfullfile,x0,y0,lx,ly,NxEquiv,NyEquiv)
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
+writeToLogFile(logfullfile,['... done.','\n'])
+
+% filter nodes if elements are not linear quadrilaterals
+writeToLogFile(logfullfile,'Filtering nodes if elements are not linear quadrilaterals ...\n')
+writeToLogFile(logfullfile,['Calling function ', 'filterRectangularMesh',' ...\n']);
+try
+  nodes,elements,edges,...
+  nodesSWcorner,nodesSEcorner,nodesNEcorner,nodesNWcorner,nodesSOUTHside,nodesEASTside,nodesNORTHside,nodesWESTside,...
+  edgesSOUTHside,edgesEASTside,edgesNORTHside,edgesWESTside,...
+  elementsSWcorner,elementsSEcorner,elementsNEcorner,elementsNWcorner,elementsSOUTHside,elementsEASTside,elementsNORTHside,elementsWESTside=filterRectangularMesh(logfullfile,latexFolder,...
+                                                                                                                                                                   elType,elOrder,Nx,Ny,NxEquiv,NyEquiv,...
+                                                                                                                                                                   baseNodes,isCircular,circularity)
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
+writeToLogFile(logfullfile,['... done.','\n'])
 
 elapsed = toc(start);
 writeToLogFile(logfullfile,'Timer stopped.\n')
