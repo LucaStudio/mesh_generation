@@ -4,7 +4,7 @@ function[nodes,elements,edges,...
          elementsSWcorner,elementsSEcorner,elementsNEcorner,elementsNWcorner,elementsSOUTHside,elementsEASTside,elementsNORTHside,elementsWESTside]=higherOrderGradedRectangle(logfullfile,latexFolder,elType,elOrder,isCircular,circularity,x0,y0,lx,ly,Nx,Ny)
 %%
 %==============================================================================
-% Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
+% Copyright (c) 2016-2017 Universit� de Lorraine & Lule� tekniska universitet
 % Author: Luca Di Stasio <luca.distasio@gmail.com>
 %                        <luca.distasio@ingpec.eu>
 %

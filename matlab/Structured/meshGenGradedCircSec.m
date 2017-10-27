@@ -43,7 +43,10 @@ function[nodes,elements,edges]=meshGenGradedCircSec(logfullfile,elType,elOrder,x
 %  Input: x0 - scalar - x-coordinate of center
 %         y0 - scalar - y-coordinate of center
 %         R  - scalar - Radius
-%         thetas - [M x 1] vector - Angular aperture of each one of the M mesh regions in each 90° section with wich the circle is mapped to a square
+%         thetas - [M x 1] vector - Angular aperture of each one of the M mesh regions
+%                                   in each 90° section with wich the circle is mapped to a square,
+%                                   except the last one; i.e. if the 90° region is not divided
+%                                   the length of this vector is 0
 %         deltas - [M x 1] vector - Number of ELEMENTS in each one of the M mesh regions in x-direction
 %%
 
@@ -52,9 +55,39 @@ writeToLogFile(logfullfile,'\nStarting timer\n')
 start = tic;
 
 % compute parameters for the reference rectangle
-writeToLogFile(logfullfile,['Compute parameters for the reference rectangular mesh ...','\n'])
+writeToLogFile(logfullfile,['Compute boundaries of mesh in real and computational space ...','\n'])
 try
+  A = [-R/sqrt(2);-R/sqrt(2)]; % cos(45°)=sin(45°)=1/sqrt(2)
+  B = [R/sqrt(2);-R/sqrt(2)];
+  C = [R/sqrt(2);R/sqrt(2)];
+  D = [-R/sqrt(2);R/sqrt(2)];
+  A1 = A; % point on rectangular mesh starting configuration
+  B1 = B;
+  C1 = C;
+  D1 = D;
+  Ps = [];
+  P1s = [];
+  AB = [];
+  DC = [];
+  BC = [];
+  AD = [];
+  AB1 = [];
+  DC1 = [];
+  BC1 = [];
+  AD1 = [];
+  if length(thetas)>0
 
+  else
+      for i=1:length(theta)
+          alpha = -0.75*pi + sum(theta(1:i,1));
+          beta = -0.25*pi + sum(theta(1:i,1));
+          E = [R*cos(alpha);R*sin(alpha)];
+          F = [R*cos(beta);R*sin(beta)];
+          G = [R*cos(alpha);-R*sin(alpha)];
+          H = [-R*cos(beta);R*sin(beta)];
+          E1 = [sign(E(1))*abs(A(2))/tan(0.25*pi+sum(theta(1:i,1))),A(2)];
+      end
+  end
 catch ME
   writeToLogFile(logfullfile,['An error occurred: ', ME.identifier])
   writeToLogFile(logfullfile,['Terminating program.','\n'])
