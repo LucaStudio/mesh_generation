@@ -2,7 +2,7 @@ function[mesh] = gradedRectangle(logfullfile,x0,y0,lx,ly,Nx,Ny)
 
 %%
 %==============================================================================
-% Copyright (c) 2016 Universitï¿½ de Lorraine & Luleï¿½ tekniska universitet
+% Copyright (c) 2016 - 2017 Université de Lorraine & Luleå tekniska universitet
 % Author: Luca Di Stasio <luca.distasio@gmail.com>
 %                        <luca.distasio@ingpec.eu>
 %
@@ -15,7 +15,7 @@ function[mesh] = gradedRectangle(logfullfile,x0,y0,lx,ly,Nx,Ny)
 % Redistributions in binary form must reproduce the above copyright
 % notice, this list of conditions and the following disclaimer in
 % the documentation and/or other materials provided with the distribution
-% Neither the name of the Universitï¿½ de Lorraine or Luleï¿½ tekniska universitet
+% Neither the name of the Université de Lorraine & Luleå tekniska universitet
 % nor the names of its contributors may be used to endorse or promote products
 % derived from this software without specific prior written permission.
 %

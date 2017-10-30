@@ -1,7 +1,7 @@
 function[nodes,elements,edges]=meshGenCircHolesGradedRect(logfullfile,elType,elOrder,x0,y0,lx,ly,Nx,Ny,holes)
 %%
 %==============================================================================
-% Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
+% Copyright (c) 2016 - 2017 Universit� de Lorraine & Lule� tekniska universitet
 % Author: Luca Di Stasio <luca.distasio@gmail.com>
 %                        <luca.distasio@ingpec.eu>
 %
@@ -42,18 +42,48 @@ function[nodes,elements,edges]=meshGenCircHolesGradedRect(logfullfile,elType,elO
 %         ly - [N x 1] vector - Side length in each one of the N mesh regions in y-direction
 %         Nx - [M x 1] vector - Number of ELEMENTS in each one of the M mesh regions in x-direction
 %         Ny - [N x 1] vector - Number of ELEMENTS in each one of the N mesh regions in y-direction
-%         holes - [H x 4] matrix - H is the number of holes; for each hole the following data must pe provided:
+%         holes - [H x 3] matrix - H is the number of holes; for each hole the following data must pe provided:
 %                                  xC - scalar - x-coordinate of hole's center
 %                                  yC - scalar - y-coordinate of hole's center
-%                                  xL - scalar - half-length of side parallel to x-axis
-%                                  yL - scalar - half-length of side parallel to y-axis
+%                                  R - scalar - Radius
 %%
 
 writeToLogFile(logfullfile,'In function: meshGenCircHolesGradedRect\n')
 writeToLogFile(logfullfile,'\nStarting timer\n')
 start = tic;
 
-% creating rectangular mesh
+writeToLogFile(logfullfile,['Creating base rectangular mesh ...','\n'])
+try
+  if strcomp(elType,'quads') || strcomp(elType,'quad') || strcomp(elType,'quadrilaterals') || strcomp(elType,'quadrilateral')
+    if strcomp(elOrder,'first') || strcomp(elOrder,'First') || strcomp(elOrder,'1st') || strcomp(elOrder,'1')
+      writeToLogFile(logfullfile,['    Type ad order of elements : First order quadrilaterals','\n'])
+      NxEquiv = Nx;
+      NyEquiv = Ny;
+    elseif strcomp(elOrder,'second') || strcomp(elOrder,'Second') || strcomp(elOrder,'2nd') || strcomp(elOrder,'2')
+      writeToLogFile(logfullfile,['    Type ad order of elements : Second order quadrilaterals','\n'])
+      NxEquiv = 2*Nx;
+      NyEquiv = 2*Ny;
+    end
+  elseif strcomp(elType,'tris') || strcomp(elType,'tri') || strcomp(elType,'triangles') || strcomp(elType,'triangle')
+    if strcomp(elOrder,'first') || strcomp(elOrder,'First') || strcomp(elOrder,'1st') || strcomp(elOrder,'1')
+      writeToLogFile(logfullfile,['    Type ad order of elements : First order triangles','\n'])
+      NxEquiv = Nx;
+      NyEquiv = Ny;
+    elseif strcomp(elOrder,'second') || strcomp(elOrder,'Second') || strcomp(elOrder,'2nd') || strcomp(elOrder,'2')
+      writeToLogFile(logfullfile,['    Type ad order of elements : Second order triangles','\n'])
+      NxEquiv = 2*Nx;
+      NyEquiv = 2*Ny;
+    end
+  end
+  writeToLogFile(logfullfile,['    Calling function ', 'gradedRectangle',' ...\n']);
+  baseMesh = gradedRectangle(logfullfile,x0,y0,lx,ly,NxEquiv,NyEquiv);
+  writeToLogFile(logfullfile,['    ... done.','\n'])
+  writeToLogFile(logfullfile,['... done.','\n'])
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
 
 % define holes
 

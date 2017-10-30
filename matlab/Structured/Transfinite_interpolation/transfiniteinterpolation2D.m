@@ -2,7 +2,7 @@ function[lattice]=transfiniteinterpolation2D(N,compdomain,xi_min,xi_max,eta_min,
 
 %%
 %==============================================================================
-% Copyright (c) 2016 Université de Lorraine & Luleå tekniska universitet
+% Copyright (c) 2016 - 2017 Université de Lorraine & Luleå tekniska universitet
 % Author: Luca Di Stasio <luca.distasio@gmail.com>
 %                        <luca.distasio@ingpec.eu>
 %

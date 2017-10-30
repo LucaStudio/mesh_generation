@@ -1,4 +1,7 @@
-function[nodes,elements,edges]=meshGenGradedCircSec(logfullfile,elType,elOrder,x0,y0,R,thetas,deltas)
+function[nodes,elements,edges,...
+    nodesSWcorner,nodesSEcorner,nodesNEcorner,nodesNWcorner,nodesSOUTHside,nodesEASTside,nodesNORTHside,nodesWESTside,...
+    edgesSOUTHside,edgesEASTside,edgesNORTHside,edgesWESTside,...
+    elementsSWcorner,elementsSEcorner,elementsNEcorner,elementsNWcorner,elementsSOUTHside,elementsEASTside,elementsNORTHside,elementsWESTside]=meshGenGradedCircSec(logfullfile,elType,elOrder,x0,y0,R,thetas,deltas)
 %%
 %==============================================================================
 % Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
@@ -47,7 +50,7 @@ function[nodes,elements,edges]=meshGenGradedCircSec(logfullfile,elType,elOrder,x
 %                                   in each 90° section with wich the circle is mapped to a square,
 %                                   the last one included; i.e. if the 90° region is not divided
 %                                   the length of this vector is 1
-%         deltas - [M x 1] vector - Number of ELEMENTS in each one of the M mesh regions in x-direction
+%         deltas - [M x 1] vector - Angular aperture of ELEMENTS in each one of the M mesh regions in x-direction
 %%
 
 writeToLogFile(logfullfile,'In function: meshGenGradedCircSec\n')
@@ -327,24 +330,66 @@ catch ME
   exit(2)
 end
 
-
+% create structured mesh by mapping
+writeToLogFile(logfullfile,['Creating structured mesh by mapping ...','\n'])
+try
+  writeToLogFile(logfullfile,['    Calling function ', 'transfiniteinterpolation2D',' ...\n']);
+  mappedMesh = transfiniteinterpolation2D(length(Hline)*length(Vline),baseMesh,A(1),B(1),A(2),D(2),length(Hline),length(Vline),1,[A1;AB1;B1],[A1;AD1;D1],[D1;DC1;C1],[B1;BC1;C1],A,B,C,D);
+  writeToLogFile(logfullfile,['    ... done.','\n'])
+  writeToLogFile(logfullfile,['    Calling function ', 'getindices2D',' ...\n']);
+  [indicesbulk,indicesinternalbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesexternalE1,indicesexternalE2,indicesexternalE3,indicesexternalE4,indicesinternalE1,indicesinternalE2,indicesinternalE3,indicesinternalE4,indicesC1,indicesC2,indicesC3,indicesC4,indicesinternalC1,indicesinternalC2,indicesinternalC3,indicesinternalC4] = getindices2D(length(Hline),length(Vline));
+  writeToLogFile(logfullfile,['    ... done.','\n'])
+  writeToLogFile(logfullfile,['    Calling function ', 'build_neighbourhoods2D',' ...\n']);
+  [temp1,temp2,temp3,firstdevneighbours] = build_neighbourhoods2D(length(Hline)*length(Vline),length(Hline),0,0,0,0,0,indicesbulk,indicesinternalbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesexternalE1,indicesexternalE2,indicesexternalE3,indicesexternalE4,indicesinternalE1,indicesinternalE2,indicesinternalE3,indicesinternalE4,indicesC1,indicesC2,indicesC3,indicesC4,indicesinternalC1,indicesinternalC2,indicesinternalC3,indicesinternalC4);
+  writeToLogFile(logfullfile,['    ... done.','\n'])
+  writeToLogFile(logfullfile,['    Calling function ', 'transfiniteinterpolation2D',' ...\n']);
+  itmax = 10;
+  tol = 10^-8;
+  mappedMesh = sparseellipticgridgen2D(length(Hline),length(Hline)*length(Vline),mappedMesh,[(B(1)-A(1))/(length(Hline)-1),(D(2)-A(2))/(length(Vline)-1)],0,0,indicesbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesC1,indicesC2,indicesC3,indicesC4,firstdevneighbours,itmax,tol,0);
+  clear temp1 temp2 temp3
+  writeToLogFile(logfullfile,['    ... done.','\n'])
+  writeToLogFile(logfullfile,['... done.','\n'])
+catch ME
+  writeToLogFile(logfullfile,['An error occurred: ', ME.identifier])
+  writeToLogFile(logfullfile,['Terminating program.','\n'])
+  exit(2)
+end
 
 % filter nodes if elements are not linear quadrilaterals
 writeToLogFile(logfullfile,'Filtering nodes if elements are not linear quadrilaterals ...\n')
-writeToLogFile(logfullfile,['Calling function ', 'filterRectangularMesh',' ...\n']);
 try
-  nodes,elements,edges,...
-  nodesSWcorner,nodesSEcorner,nodesNEcorner,nodesNWcorner,nodesSOUTHside,nodesEASTside,nodesNORTHside,nodesWESTside,...
-  edgesSOUTHside,edgesEASTside,edgesNORTHside,edgesWESTside,...
-  elementsSWcorner,elementsSEcorner,elementsNEcorner,elementsNWcorner,elementsSOUTHside,elementsEASTside,elementsNORTHside,elementsWESTside=filterRectangularMesh(logfullfile,latexFolder,...
-                                                                                                                                                                   elType,elOrder,Nx,Ny,NxEquiv,NyEquiv,...
-                                                                                                                                                                   baseNodes,isCircular,circularity)
+  writeToLogFile(logfullfile,['Calling function ', 'filterRectangularMesh',' ...\n']);
+  Nx = thetas./deltas;
+  if strcomp(elType,'quads') || strcomp(elType,'quad') || strcomp(elType,'quadrilaterals') || strcomp(elType,'quadrilateral')
+    if strcomp(elOrder,'first') || strcomp(elOrder,'First') || strcomp(elOrder,'1st') || strcomp(elOrder,'1')
+      writeToLogFile(logfullfile,['    Type ad order of elements : First order quadrilaterals','\n'])
+      NxEquiv = Nx;
+    elseif strcomp(elOrder,'second') || strcomp(elOrder,'Second') || strcomp(elOrder,'2nd') || strcomp(elOrder,'2')
+      writeToLogFile(logfullfile,['    Type ad order of elements : Second order quadrilaterals','\n'])
+      NxEquiv = 2*Nx;
+    end
+  elseif strcomp(elType,'tris') || strcomp(elType,'tri') || strcomp(elType,'triangles') || strcomp(elType,'triangle')
+    if strcomp(elOrder,'first') || strcomp(elOrder,'First') || strcomp(elOrder,'1st') || strcomp(elOrder,'1')
+      writeToLogFile(logfullfile,['    Type ad order of elements : First order triangles','\n'])
+      NxEquiv = Nx;
+    elseif strcomp(elOrder,'second') || strcomp(elOrder,'Second') || strcomp(elOrder,'2nd') || strcomp(elOrder,'2')
+      writeToLogFile(logfullfile,['    Type ad order of elements : Second order triangles','\n'])
+      NxEquiv = 2*Nx;
+    end
+  end
+  [nodes,elements,edges,...
+      nodesSWcorner,nodesSEcorner,nodesNEcorner,nodesNWcorner,nodesSOUTHside,nodesEASTside,nodesNORTHside,nodesWESTside,...
+      edgesSOUTHside,edgesEASTside,edgesNORTHside,edgesWESTside,...
+      elementsSWcorner,elementsSEcorner,elementsNEcorner,elementsNWcorner,elementsSOUTHside,elementsEASTside,elementsNORTHside,elementsWESTside] = filterRectangularMesh(logfullfile,...
+                                                                                                                                                                      elType,elOrder,Nx,Nx,NxEquiv,NxEquiv,...
+  nodes(:,1) = x0 + nodes(:,1);
+  nodes(:,2) = y0 + nodes(:,2);
+  writeToLogFile(logfullfile,['... done.','\n'])                                                                                                                      mappedMesh,0,'none')                                                                                                                                                     baseNodes,isCircular,circularity)
 catch ME
   writeToLogFile(logfullfile,['An error occurred: ', ME.identifier,'\n'])
   writeToLogFile(logfullfile,['Terminating program.','\n'])
   exit(2)
 end
-writeToLogFile(logfullfile,['... done.','\n'])
 
 elapsed = toc(start);
 writeToLogFile(logfullfile,'Timer stopped.\n')
