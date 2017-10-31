@@ -1,19 +1,36 @@
 function[u1]=JFNKmethod(F,u0,tol,itmax,precond,alpha,sigma0,sigma1)
 
-%%
-%        Project: Fluid - structure interaction on deformable surfaces
-%         Author: Luca Di Stasio
-%    Institution: ETH Zürich
-%                 Institute for Building Materials
-% Research group: Computational Physics for Engineering Materials
-%        Version: 0.1
-%  Creation date: May 19th, 2014
-%    Last update: May 21st, 2014
+%==============================================================================
+% Copyright (c) 2016 - 2017 Universit� de Lorraine & Lule� tekniska universitet
+% Author: Luca Di Stasio <luca.distasio@gmail.com>
+%                        <luca.distasio@ingpec.eu>
 %
-%    Description: 
-%          Input: 
-%         Output: 
-
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are met:
+%
+%
+% Redistributions of source code must retain the above copyright
+% notice, this list of conditions and the following disclaimer.
+% Redistributions in binary form must reproduce the above copyright
+% notice, this list of conditions and the following disclaimer in
+% the documentation and/or other materials provided with the distribution
+% Neither the name of the Universit� de Lorraine or Lule� tekniska universitet
+% nor the names of its contributors may be used to endorse or promote products
+% derived from this software without specific prior written permission.
+%
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+% POSSIBILITY OF SUCH DAMAGE.
+%==============================================================================
+%
 %%
 
 N = size(u0,1);
@@ -30,7 +47,7 @@ F0 = feval(F,u0);
 errnewton = F0;
 k = 0;
 
-while errnewton>=tol && k<=itmax  
+while errnewton>=tol && k<=itmax
     du0 = zeros(N,1);
     %------ GMRES(m) -----
     err = 1;

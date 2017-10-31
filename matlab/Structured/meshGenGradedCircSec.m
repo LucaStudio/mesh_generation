@@ -4,7 +4,7 @@ function[nodes,elements,edges,...
     elementsSWcorner,elementsSEcorner,elementsNEcorner,elementsNWcorner,elementsSOUTHside,elementsEASTside,elementsNORTHside,elementsWESTside]=meshGenGradedCircSec(logfullfile,elType,elOrder,x0,y0,R,thetas,deltas)
 %%
 %==============================================================================
-% Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
+% Copyright (c) 2016 - 2017 Université de Lorraine & Luleå tekniska universitet
 % Author: Luca Di Stasio <luca.distasio@gmail.com>
 %                        <luca.distasio@ingpec.eu>
 %
@@ -17,7 +17,7 @@ function[nodes,elements,edges,...
 % Redistributions in binary form must reproduce the above copyright
 % notice, this list of conditions and the following disclaimer in
 % the documentation and/or other materials provided with the distribution
-% Neither the name of the Universit� de Lorraine or Lule� tekniska universitet
+% Neither the name of the Université de Lorraine & Luleå tekniska universitet
 % nor the names of its contributors may be used to endorse or promote products
 % derived from this software without specific prior written permission.
 %
@@ -342,7 +342,7 @@ try
   writeToLogFile(logfullfile,['    Calling function ', 'build_neighbourhoods2D',' ...\n']);
   [temp1,temp2,temp3,firstdevneighbours] = build_neighbourhoods2D(length(Hline)*length(Vline),length(Hline),0,0,0,0,0,indicesbulk,indicesinternalbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesexternalE1,indicesexternalE2,indicesexternalE3,indicesexternalE4,indicesinternalE1,indicesinternalE2,indicesinternalE3,indicesinternalE4,indicesC1,indicesC2,indicesC3,indicesC4,indicesinternalC1,indicesinternalC2,indicesinternalC3,indicesinternalC4);
   writeToLogFile(logfullfile,['    ... done.','\n'])
-  writeToLogFile(logfullfile,['    Calling function ', 'transfiniteinterpolation2D',' ...\n']);
+  writeToLogFile(logfullfile,['    Calling function ', 'sparseellipticgridgen2D',' ...\n']);
   itmax = 10;
   tol = 10^-8;
   mappedMesh = sparseellipticgridgen2D(length(Hline),length(Hline)*length(Vline),mappedMesh,[(B(1)-A(1))/(length(Hline)-1),(D(2)-A(2))/(length(Vline)-1)],0,0,indicesbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesC1,indicesC2,indicesC3,indicesC4,firstdevneighbours,itmax,tol,0);

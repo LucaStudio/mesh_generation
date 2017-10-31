@@ -4,7 +4,7 @@ function[nodes,elements,edges,...
     elementsSWcorner,elementsSEcorner,elementsNEcorner,elementsNWcorner,elementsSOUTHside,elementsEASTside,elementsNORTHside,elementsWESTside]=meshGenGradedAnnularSec(logfullfile,elType,elOrder,isClosed,x0,y0,Rin,theta0,ltheta,lR,deltas,NR)
 %%
 %==============================================================================
-% Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
+% Copyright (c) 2016 - 2017 Université de Lorraine & Luleå tekniska universitet
 % Author: Luca Di Stasio <luca.distasio@gmail.com>
 %                        <luca.distasio@ingpec.eu>
 %
@@ -17,7 +17,7 @@ function[nodes,elements,edges,...
 % Redistributions in binary form must reproduce the above copyright
 % notice, this list of conditions and the following disclaimer in
 % the documentation and/or other materials provided with the distribution
-% Neither the name of the Universit� de Lorraine or Lule� tekniska universitet
+% Neither the name of the Université de Lorraine & Luleå tekniska universitet
 % nor the names of its contributors may be used to endorse or promote products
 % derived from this software without specific prior written permission.
 %
