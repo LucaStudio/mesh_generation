@@ -1,4 +1,9 @@
-function[lattice]=sparseellipticgridgen2Dinternalboundaries(Nx,N,lattice,deltaq,boundary,flagperiodicity,periodicity,indicesbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesC1,indicesC2,indicesC3,indicesC4,firstdevneighbours,itmax,tol,spy)
+function[lattice]=sparseellipticgridgen2Dinternalboundaries(logfullfile,Nx,N,...
+                                                            lattice,deltaq,boundary,flagperiodicity,periodicity,...
+                                                            indicesbulk,...
+                                                            indicesE1,indicesE2,indicesE3,indicesE4,...
+                                                            indicesC1,indicesC2,indicesC3,indicesC4,...
+                                                            firstdevneighbours,itmax,tol,spy)
 
 %%
 %==============================================================================
@@ -33,6 +38,10 @@ function[lattice]=sparseellipticgridgen2Dinternalboundaries(Nx,N,lattice,deltaq,
 %==============================================================================
 %
 %%
+
+writeToLogFile(logfullfile,'In function: sparseellipticgridgen2Dinternalboundaries\n')
+writeToLogFile(logfullfile,'\nStarting timer\n')
+start = tic;
 
 if ~flagperiodicity
     boundaryindices = [indicesE1;indicesE2;indicesE3;indicesE4;indicesC1;indicesC2;indicesC3;indicesC4;boundary];
@@ -106,5 +115,10 @@ while it<=itmax && err>=tol
     it = it + 1;
     clear A bx by metriccoefficients
 end
+
+elapsed = toc(start);
+writeToLogFile(logfullfile,'Timer stopped.\n')
+writeToLogFile(logfullfile,['\nELAPSED WALLCLOCK TIME: ', num2str(elapsed),' [s]\n\n'])
+writeToLogFile(logfullfile,'Exiting function: sparseellipticgridgen2Dinternalboundaries\n')
 
 return

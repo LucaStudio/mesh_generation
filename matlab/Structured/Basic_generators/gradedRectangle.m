@@ -50,6 +50,8 @@ function[mesh] = gradedRectangle(logfullfile,x0,y0,lx,ly,Nx,Ny)
 %%
 
 writeToLogFile(logfullfile,'In function: gradedRectangle\n')
+writeToLogFile(logfullfile,'\nStarting timer\n')
+start = tic;
 
 % Get size of vectors M and N
 writeToLogFile(logfullfile,'Getting size of vectors M and N ...\n')

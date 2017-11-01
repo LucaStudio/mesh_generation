@@ -1,4 +1,4 @@
-function[lattice]=transfiniteinterpolation2D(N,compdomain,xi_min,xi_max,eta_min,eta_max,Ndim1,Ndim2,interpolanttype,e1,e2,e3,e4,c1,c2,c3,c4)
+function[lattice]=transfiniteinterpolation2D(logfullfile,N,compdomain,xi_min,xi_max,eta_min,eta_max,Ndim1,Ndim2,interpolanttype,e1,e2,e3,e4,c1,c2,c3,c4)
 
 %%
 %==============================================================================
@@ -62,6 +62,10 @@ function[lattice]=transfiniteinterpolation2D(N,compdomain,xi_min,xi_max,eta_min,
 
 %%
 
+writeToLogFile(logfullfile,'In function: transfiniteinterpolation2D\n')
+writeToLogFile(logfullfile,'\nStarting timer\n')
+start = tic;
+
 mesh = zeros(N,2);
 
 switch interpolanttype
@@ -112,5 +116,10 @@ mesh(indicesE4,1) = e4(2:end-1,1);
 mesh(indicesE4,2) = e4(2:end-1,2);
 
 lattice = [compdomain mesh mesh];
+
+elapsed = toc(start);
+writeToLogFile(logfullfile,'Timer stopped.\n')
+writeToLogFile(logfullfile,['\nELAPSED WALLCLOCK TIME: ', num2str(elapsed),' [s]\n\n'])
+writeToLogFile(logfullfile,'Exiting function: transfiniteinterpolation2D\n')
 
 return

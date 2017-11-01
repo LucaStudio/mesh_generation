@@ -6,7 +6,7 @@ function[nodes,elements,edges,...
                                                                                                                                                                           baseNodes,isCircular,circularity)
 %%
 %==============================================================================
-% Copyright (c) 2016 Universit� de Lorraine & Lule� tekniska universitet
+% Copyright (c) 2016 - 2017 Université de Lorraine & Luleå tekniska universitet
 % Author: Luca Di Stasio <luca.distasio@gmail.com>
 %                        <luca.distasio@ingpec.eu>
 %
@@ -19,7 +19,7 @@ function[nodes,elements,edges,...
 % Redistributions in binary form must reproduce the above copyright
 % notice, this list of conditions and the following disclaimer in
 % the documentation and/or other materials provided with the distribution
-% Neither the name of the Universit� de Lorraine or Lule� tekniska universitet
+% Neither the name of the Université de Lorraine or Luleå tekniska universitet
 % nor the names of its contributors may be used to endorse or promote products
 % derived from this software without specific prior written permission.
 %
@@ -78,11 +78,11 @@ try
     if strcomp(elOrder,'first') || strcomp(elOrder,'First') || strcomp(elOrder,'1st') || strcomp(elOrder,'1')
       if isCircular
         if strcomp(circularity,'EW') || strcomp(circularity,'E-W') || strcomp(circularity,'EastWest') || strcomp(circularity,'East-West')
-          filteredNodes = zeros(sum(Nx)*(sum(Ny)+1),2);
+          filteredNodes = zeros(sum(Nx)*(sum(Ny)+1),size(baseNodes,2));
           edges = zeros((2*sum(Nx))*sum(Ny)+sum(Nx),2);
           elements = zeros(sum(Nx)*sum(Ny),4);
           for j=1:sum(Ny)
-            filteredNodes((j-1)*sum(Nx)+1:j*sum(Nx),1:2) = baseNodes((j-1)*(sum(Nx)+1)+1:(j-1)*(sum(Nx)+1)+sum(Nx),1:2);
+            filteredNodes((j-1)*sum(Nx)+1:j*sum(Nx),:) = baseNodes((j-1)*(sum(Nx)+1)+1:(j-1)*(sum(Nx)+1)+sum(Nx),:);
             elements((j-1)*sum(Nx)+1:j*sum(Nx),1) = ((j-1)*sum(Nx)+1:j*sum(Nx))';
             elements((j-1)*sum(Nx)+1:j*sum(Nx)-1,2) = ((j-1)*sum(Nx)+2:j*sum(Nx))';
             elements((j-1)*sum(Nx)+1:j*sum(Nx)-1,3) = (j*sum(Nx)+2:(j+1)*sum(Nx))';
@@ -95,7 +95,7 @@ try
             edges((j-1)*sum(Nx)+sum(Nx)+1:2*j*sum(Nx),2) = (j*sum(Nx)+1:(j+1)*sum(Nx))';
           end
           j = sum(Ny)+1;
-          filteredNodes((j-1)*sum(Nx)+1:j*sum(Nx)) = baseNodes((j-1)*(sum(Nx)+1)+1:(j-1)*(sum(Nx)+1)+sum(Nx),1:2);
+          filteredNodes((j-1)*sum(Nx)+1:j*sum(Nx),:) = baseNodes((j-1)*(sum(Nx)+1)+1:(j-1)*(sum(Nx)+1)+sum(Nx),:);
           edges((2*sum(Nx)+1)*sum(Ny)+1:(2*sum(Nx)+1)*sum(Ny)+sum(Nx),1) = (j*sum(Nx)+1:(j+1)*sum(Nx))';
           edges((2*sum(Nx)+1)*sum(Ny)+1:(2*sum(Nx)+1)*sum(Ny)+sum(Nx),2) = (j*sum(Nx)+2:(j+1)*sum(Nx)+1)';
           nodes = filteredNodes;
@@ -120,11 +120,11 @@ try
           elementsNORTHside = sum(Ny)*sum(Nx)+(1:sum(Nx))'; %except corners
           elementsWESTside = []; %except corners
         else % North-South circularity
-          filteredNodes = zeros((sum(Nx)+1)*sum(Ny),2);
+          filteredNodes = zeros((sum(Nx)+1)*sum(Ny),size(baseNodes,2));
           edges = zeros((2*sum(Nx)+1)*sum(Ny),2);
           elements = zeros(sum(Nx)*sum(Ny),4);
           for j=1:sum(Ny)-1
-            filteredNodes((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),1:2) = baseNodes((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),1:2);
+            filteredNodes((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),:) = baseNodes((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),:);
             elements((j-1)*sum(Nx)+1:j*sum(Nx),1) = ((j-1)*sum(Nx)+1:j*sum(Nx))';
             elements((j-1)*sum(Nx)+1:j*sum(Nx),2) = ((j-1)*sum(Nx)+2:j*sum(Nx)+1)';
             elements((j-1)*sum(Nx)+1:j*sum(Nx),3) = (j*sum(Nx)+2:(j+1)*sum(Nx)+1)';
@@ -137,7 +137,7 @@ try
             edges(2*j*sum(Nx)+1,2) = (j+1)*sum(Nx)+1;
           end
           j = sum(Ny);
-          filteredNodes((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),1:2) = baseNodes((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),1:2);
+          filteredNodes((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),:) = baseNodes((j-1)*(sum(Nx)+1)+1:j*(sum(Nx)+1),:);
           elements((j-1)*sum(Nx)+1:j*sum(Nx),1) = ((j-1)*sum(Nx)+1:j*sum(Nx))';
           elements((j-1)*sum(Nx)+1:j*sum(Nx),2) = ((j-1)*sum(Nx)+2:j*sum(Nx)+1)';
           elements((j-1)*sum(Nx)+1:j*sum(Nx),3) = (2:sum(Nx)+1)';
@@ -213,12 +213,12 @@ try
     elseif strcomp(elOrder,'second') || strcomp(elOrder,'Second') || strcomp(elOrder,'2nd') || strcomp(elOrder,'2')
       if isCircular
         if strcomp(circularity,'EW') || strcomp(circularity,'E-W') || strcomp(circularity,'EastWest') || strcomp(circularity,'East-West')
-          filteredNodes = zeros((3*sum(Nx))*sum(Ny)+2*sum(Nx),2);
+          filteredNodes = zeros((3*sum(Nx))*sum(Ny)+2*sum(Nx),size(baseNodes,2));
           edges = zeros((2*sum(Nx))*sum(Ny)+sum(Nx),3);
           elements = zeros(sum(Nx)*sum(Ny),8);
           for j=1:sum(Ny)
-            filteredNodes((j-1)*(3*sum(Nx))+1:(j-1)*(3*sum(Nx))+2*sum(Nx),1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv),1:2);
-            filteredNodes((j-1)*(3*sum(Nx))+2*sum(Nx)+1:j*(3*sum(Nx)),1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1+1:2:2*j*(sum(NxEquiv)+1)-2,1:2);
+            filteredNodes((j-1)*(3*sum(Nx))+1:(j-1)*(3*sum(Nx))+2*sum(Nx),:) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv),:);
+            filteredNodes((j-1)*(3*sum(Nx))+2*sum(Nx)+1:j*(3*sum(Nx)),:) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1+1:2:2*j*(sum(NxEquiv)+1)-2,:);
             elements((j-1)*sum(Nx)+1:j*sum(Nx),1) = ((j-1)*(3*sum(Nx))+1:2:(j-1)*(3*sum(Nx))+2*sum(Nx)-1)';
             elements((j-1)*sum(Nx)+1:j*sum(Nx)-1,2) = ((j-1)*(3*sum(Nx))+3:2:(j-1)*(3*sum(Nx))+2*sum(Nx)-1)';
             elements((j-1)*sum(Nx)+1:j*sum(Nx)-1,3) = (j*(3*sum(Nx))+3:2:j*(3*sum(Nx))+2*sum(Nx)-1)';
@@ -238,7 +238,7 @@ try
             edges((j-1)*2*sum(Nx)+sum(Nx)+1:2*j*sum(Nx),3) = (j*(3*sum(Nx)+2)+1:2:j*(3*sum(Nx)+2)+2*sum(Nx)-1)';
           end
           j = sum(Ny)+1;
-          filteredNodes((j-1)*(3*sum(Nx))+1:(j-1)*(3*sum(Nx))+2*sum(Nx),1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv),1:2);
+          filteredNodes((j-1)*(3*sum(Nx))+1:(j-1)*(3*sum(Nx))+2*sum(Nx),:) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv),:);
           edges((j-1)*2*sum(Nx)+1:(j-1)*2*sum(Nx)+sum(Nx),1) = ((j-1)*(3*sum(Nx))+1:2:(j-1)*(3*sum(Nx))+2*sum(Nx)-1)';
           edges((j-1)*2*sum(Nx)+1:(j-1)*2*sum(Nx)+sum(Nx),2) = ((j-1)*(3*sum(Nx))+2:2:(j-1)*(3*sum(Nx))+2*sum(Nx))';
           edges((j-1)*2*sum(Nx)+1:(j-1)*2*sum(Nx)+sum(Nx),3) = ((j-1)*(3*sum(Nx))+3:2:(j-1)*(3*sum(Nx))+2*sum(Nx)-1)';
@@ -265,12 +265,12 @@ try
           elementsWESTside = []; %except corners
 % ===============> circularity and boundaries completed on 18/08/2017 at 14:38
         else % North-South circularity
-          filteredNodes = zeros((3*sum(Nx)+2)*sum(Ny),2);
+          filteredNodes = zeros((3*sum(Nx)+2)*sum(Ny),size(baseNodes,2));
           edges = zeros((2*sum(Nx)+1)*sum(Ny),3);
           elements = zeros(sum(Nx)*sum(Ny),8);
           for j=1:sum(Ny)-1
-            filteredNodes((j-1)*(3*sum(Nx)+2)+1:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1,1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1,1:2);
-            filteredNodes((j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1+1:j*(3*sum(Nx)+2),1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1+1:2:2*j*(sum(NxEquiv)+1),1:2);
+            filteredNodes((j-1)*(3*sum(Nx)+2)+1:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1,:) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1,:);
+            filteredNodes((j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1+1:j*(3*sum(Nx)+2),:) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1+1:2:2*j*(sum(NxEquiv)+1),:);
             elements((j-1)*sum(Nx)+1:j*sum(Nx),1) = ((j-1)*(3*sum(Nx)+2)+1:2:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)-1)';
             elements((j-1)*sum(Nx)+1:j*sum(Nx),2) = ((j-1)*(3*sum(Nx)+2)+3:2:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1)';
             elements((j-1)*sum(Nx)+1:j*sum(Nx),3) = (j*(3*sum(Nx)+2)+3:2:j*(3*sum(Nx)+2)+2*sum(Nx)+1)';
@@ -290,8 +290,8 @@ try
             edges((j-1)*(2*sum(Nx)+1)+2*sum(Nx)+1,3) = (j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1;
           end
           j = sum(Ny);
-          filteredNodes((j-1)*(3*sum(Nx)+2)+1:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1,1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1,1:2);
-          filteredNodes((j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1+1:j*(3*sum(Nx)+2),1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1+1:2:2*j*(sum(NxEquiv)+1),1:2);
+          filteredNodes((j-1)*(3*sum(Nx)+2)+1:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1,:) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1,:);
+          filteredNodes((j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1+1:j*(3*sum(Nx)+2),:) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1+1:2:2*j*(sum(NxEquiv)+1),:);
           elements((j-1)*sum(Nx)+1:j*sum(Nx),1) = ((j-1)*(3*sum(Nx)+2)+1:2:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)-1)';
           elements((j-1)*sum(Nx)+1:j*sum(Nx),2) = ((j-1)*(3*sum(Nx)+2)+3:2:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1)';
           elements((j-1)*sum(Nx)+1:j*sum(Nx),3) = (3:2:2*sum(Nx)+1)';
@@ -337,12 +337,12 @@ try
         elementsWESTside = (1:sum(Nx):(sum(Ny)-1)*sum(Nx)+1)'; %except corners
 % ===============> circularity and boundaries completed on 18/08/2017 at 14:46
       else
-        filteredNodes = zeros((3*sum(Nx)+2)*sum(Ny)+2*sum(Nx)+1,2);
+        filteredNodes = zeros((3*sum(Nx)+2)*sum(Ny)+2*sum(Nx)+1,size(baseNodes,2));
         edges = zeros((2*sum(Nx)+1)*sum(Ny)+sum(Nx),3);
         elements = zeros(sum(Nx)*sum(Ny),8);
         for j=1:sum(Ny)
-          filteredNodes((j-1)*(3*sum(Nx)+2)+1:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1,1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1,1:2);
-          filteredNodes((j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1+1:j*(3*sum(Nx)+2),1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1+1:2:2*j*(sum(NxEquiv)+1),1:2);
+          filteredNodes((j-1)*(3*sum(Nx)+2)+1:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1,:) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1,:);
+          filteredNodes((j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1+1:j*(3*sum(Nx)+2),:) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1+1:2:2*j*(sum(NxEquiv)+1),:);
           elements((j-1)*sum(Nx)+1:j*sum(Nx),1) = ((j-1)*(3*sum(Nx)+2)+1:2:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)-1)';
           elements((j-1)*sum(Nx)+1:j*sum(Nx),2) = ((j-1)*(3*sum(Nx)+2)+3:2:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1)';
           elements((j-1)*sum(Nx)+1:j*sum(Nx),3) = (j*(3*sum(Nx)+2)+3:2:j*(3*sum(Nx)+2)+2*sum(Nx)+1)';
@@ -362,7 +362,7 @@ try
           edges(2*j*sum(Nx)+1,3) = (j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1;
         end
         j = sum(Ny)+1;
-        filteredNodes((j-1)*(3*sum(Nx)+2)+1:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1,1:2) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1,1:2);
+        filteredNodes((j-1)*(3*sum(Nx)+2)+1:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1,:) = baseNodes(2*(j-1)*(sum(NxEquiv)+1)+1:2*(j-1)*(sum(NxEquiv)+1)+sum(NxEquiv)+1,:);
         edges((2*sum(Nx)+1)*sum(Ny)+1:(2*sum(Nx)+1)*sum(Ny)+sum(Nx),1) = ((j-1)*(3*sum(Nx)+2)+1:2:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)-1)';
         edges((2*sum(Nx)+1)*sum(Ny)+1:(2*sum(Nx)+1)*sum(Ny)+sum(Nx),2) = ((j-1)*(3*sum(Nx)+2)+2:2:(j-1)*(3*sum(Nx)+2)+2*sum(Nx))';
         edges((2*sum(Nx)+1)*sum(Ny)+1:(2*sum(Nx)+1)*sum(Ny)+sum(Nx),3) = ((j-1)*(3*sum(Nx)+2)+3:2:(j-1)*(3*sum(Nx)+2)+2*sum(Nx)+1)';
@@ -396,13 +396,13 @@ try
         if strcomp(circularity,'EW') || strcomp(circularity,'E-W') || strcomp(circularity,'EastWest') || strcomp(circularity,'East-West')
           NxTri = Nx/2;
           NyTri = Ny/2;
-          filteredNodes = zeros((2*sum(NxTri))*sum(NyTri)+sum(NxTri),2);
+          filteredNodes = zeros((2*sum(NxTri))*sum(NyTri)+sum(NxTri),size(baseNodes,2));
           edges = zeros((6*sum(NxTri))*sum(NyTri)+sum(NxTri),2);
           elements = zeros(sum(Nx)*sum(Ny),3);
 % ===============> OK
           for j=1:sum(NyTri)
-            filteredNodes((j-1)*(2*sum(NxTri))+1:(j-1)*(2*sum(NxTri))+sum(NxTri),1:2) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv),1:2);
-            filteredNodes((j-1)*(2*sum(NxTri))+sum(NxTri)+1:j*(2*sum(NxTri)),1:2) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1+2:2:j*2*(sum(NxEquiv)+1)-1,1:2);
+            filteredNodes((j-1)*(2*sum(NxTri))+1:(j-1)*(2*sum(NxTri))+sum(NxTri),:) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv),:);
+            filteredNodes((j-1)*(2*sum(NxTri))+sum(NxTri)+1:j*(2*sum(NxTri)),:) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1+2:2:j*2*(sum(NxEquiv)+1)-1,:);
 % ===============> OK
             elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),1) = (j-1)*(2*sum(NxTri))+1:(j-1)*(2*sum(NxTri))+sum(NxTri);
             elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri)-1,2) = (j-1)*(2*sum(NxTri))+2:(j-1)*(2*sum(NxTri))+sum(NxTri);
@@ -439,7 +439,7 @@ try
 % ===============> OK
           end
           j = sum(NyTri)+1;
-          filteredNodes((j-1)*(2*sum(NxTri))+1:(j-1)*(2*sum(NxTri))+sum(NxTri),1:2) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv),1:2);
+          filteredNodes((j-1)*(2*sum(NxTri))+1:(j-1)*(2*sum(NxTri))+sum(NxTri),:) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv),:);
           edges((j-1)*(6*sum(NxTri))+1:(j-1)*(6*sum(NxTri))+sum(NxTri),1) = (j-1)*(2*sum(NxTri))+1:(j-1)*(2*sum(NxTri))+sum(NxTri);
           edges((j-1)*(6*sum(NxTri))+1:(j-1)*(6*sum(NxTri))+sum(NxTri)-1,2) = (j-1)*(2*sum(NxTri))+2:(j-1)*(2*sum(NxTri))+sum(NxTri);
           edges((j-1)*(6*sum(NxTri))+sum(NxTri),2) = (j-1)*(2*sum(NxTri))+1;
@@ -469,13 +469,13 @@ try
         else % South-North circularity
           NxTri = Nx/2;
           NyTri = Ny/2;
-          filteredNodes = zeros((2*sum(NxTri)+1)*sum(NyTri),2);
+          filteredNodes = zeros((2*sum(NxTri)+1)*sum(NyTri),size(baseNodes,2));
           edges = zeros((6*sum(NxTri)+1)*sum(NyTri),2);
           elements = zeros(sum(Nx)*sum(Ny),3);
 % ===============> OK
           for j=1:sum(NyTri)-1
-            filteredNodes((j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1,1:2) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1,1:2);
-            filteredNodes((j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1+1:j*(2*sum(NxTri)+1),1:2) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1+2:2:j*2*(sum(NxEquiv)+1)-1,1:2);
+            filteredNodes((j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1,:) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1,:);
+            filteredNodes((j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1+1:j*(2*sum(NxTri)+1),:) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1+2:2:j*2*(sum(NxEquiv)+1)-1,:);
             elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),1) = (j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri);
             elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),2) = (j-1)*(2*sum(NxTri)+1)+2:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1;
             elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),3) = (j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1+1:j*(2*sum(NxTri)+1);
@@ -505,8 +505,8 @@ try
           end
 % ===============> OK
           j = sum(NyTri);
-          filteredNodes((j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1,1:2) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1,1:2);
-          filteredNodes((j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1+1:j*(2*sum(NxTri)+1),1:2) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1+2:2:j*2*(sum(NxEquiv)+1)-1,1:2);
+          filteredNodes((j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1,:) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1,:);
+          filteredNodes((j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1+1:j*(2*sum(NxTri)+1),:) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1+2:2:j*2*(sum(NxEquiv)+1)-1,:);
           elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),1) = (j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri);
           elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),2) = (j-1)*(2*sum(NxTri)+1)+2:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1;
           elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),3) = (j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1+1:j*(2*sum(NxTri)+1);
@@ -560,12 +560,12 @@ try
       else
         NxTri = Nx/2;
         NyTri = Ny/2;
-        filteredNodes = zeros((2*sum(NxTri)+1)*sum(NyTri)+sum(NxTri)+1,2);
+        filteredNodes = zeros((2*sum(NxTri)+1)*sum(NyTri)+sum(NxTri)+1,size(baseNodes,2));
         edges = zeros((6*sum(NxTri)+1)*sum(NyTri)+sum(NxTri),2);
         elements = zeros(sum(Nx)*sum(Ny),3);
         for j=1:sum(NyTri)
-          filteredNodes((j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1,1:2) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1,1:2);
-          filteredNodes((j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1+1:j*(2*sum(NxTri)+1),1:2) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1+2:2:j*2*(sum(NxEquiv)+1)-1,1:2);
+          filteredNodes((j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1,:) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1,:);
+          filteredNodes((j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1+1:j*(2*sum(NxTri)+1),:) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1+2:2:j*2*(sum(NxEquiv)+1)-1,:);
           elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),1) = (j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri);
           elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),2) = (j-1)*(2*sum(NxTri)+1)+2:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1;
           elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),3) = (j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1+1:j*(2*sum(NxTri)+1);
@@ -594,7 +594,7 @@ try
           edges((j-1)*(6*sum(NxTri)+1)+6*sum(NxTri)+1,2) = j*(2*sum(NxTri)+1)+sum(NxTri)+1;
         end
         j = sum(NyTri)+1;
-        filteredNodes((j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1,1:2) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1,1:2);
+        filteredNodes((j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1,:) = baseNodes((j-1)*2*(sum(NxEquiv)+1)+1:2:(j-1)*2*(sum(NxEquiv)+1)+sum(NxEquiv)+1,:);
         edges((j-1)*(6*sum(NxTri)+1)+1:(j-1)*(6*sum(NxTri)+1)+sum(NxTri),1) = (j-1)*(2*sum(NxTri)+1)+1:(j-1)*(2*sum(NxTri)+1)+sum(NxTri);
         edges((j-1)*(6*sum(NxTri)+1)+1:(j-1)*(6*sum(NxTri)+1)+sum(NxTri),2) = (j-1)*(2*sum(NxTri)+1)+2:(j-1)*(2*sum(NxTri)+1)+sum(NxTri)+1;
         nodes = filteredNodes;
@@ -625,15 +625,15 @@ try
         if strcomp(circularity,'EW') || strcomp(circularity,'E-W') || strcomp(circularity,'EastWest') || strcomp(circularity,'East-West')
           NxTri = Nx/2;
           NyTri = Ny/2;
-          filteredNodes = zeros((8*sum(NxTri))*sum(NyTri)+2*sum(NxTri),2);
+          filteredNodes = zeros((8*sum(NxTri))*sum(NyTri)+2*sum(NxTri),size(baseNodes,2));
           edges = zeros((6*sum(NxTri))*sum(NyTri)+sum(NxTri),3);
           elements = zeros(sum(Nx)*sum(Ny),6);
 % ===============> OK
           for j=1:sum(NyTri)
-            filteredNodes((j-1)*(8*sum(NxTri))+1:(j-1)*(8*sum(NxTri))+2*sum(NxTri),1:2) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv),1:2);
-            filteredNodes((j-1)*(8*sum(NxTri))+2*sum(NxTri)+1:(j-1)*(8*sum(NxTri))+4*sum(NxTri),1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv),1:2);
-            filteredNodes((j-1)*(8*sum(NxTri))+4*sum(NxTri)+1:(j-1)*(8*sum(NxTri))+6*sum(NxTri),1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv),1:2);
-            filteredNodes((j-1)*(8*sum(NxTri))+6*sum(NxTri)+1:(j-1)*(8*sum(NxTri))+8*sum(NxTri),1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv),1:2);
+            filteredNodes((j-1)*(8*sum(NxTri))+1:(j-1)*(8*sum(NxTri))+2*sum(NxTri),:) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv),:);
+            filteredNodes((j-1)*(8*sum(NxTri))+2*sum(NxTri)+1:(j-1)*(8*sum(NxTri))+4*sum(NxTri),:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv),:);
+            filteredNodes((j-1)*(8*sum(NxTri))+4*sum(NxTri)+1:(j-1)*(8*sum(NxTri))+6*sum(NxTri),:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv),:);
+            filteredNodes((j-1)*(8*sum(NxTri))+6*sum(NxTri)+1:(j-1)*(8*sum(NxTri))+8*sum(NxTri),:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv),:);
 % ===============> OK
             elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),1) = (j-1)*(8*sum(NxTri))+1:2:(j-1)*(8*sum(NxTri))+2*sum(NxTri)-1;
             elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri)-1,2) = (j-1)*(8*sum(NxTri))+3:2:(j-1)*(8*sum(NxTri))+2*sum(NxTri);
@@ -697,7 +697,7 @@ try
 % ===============> OK
           end
           j = sum(NyTri)+1;
-          filteredNodes((j-1)*(8*sum(NxTri))+1:(j-1)*(8*sum(NxTri))+2*sum(NxTri),1:2) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv),1:2);
+          filteredNodes((j-1)*(8*sum(NxTri))+1:(j-1)*(8*sum(NxTri))+2*sum(NxTri),:) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv),:);
           edges((j-1)*(6*sum(NxTri))+1:(j-1)*(6*sum(NxTri))+sum(NxTri),1) = (j-1)*(8*sum(NxTri))+1:2:(j-1)*(8*sum(NxTri))+2*sum(NxTri)-1;
           edges((j-1)*(6*sum(NxTri))+1:(j-1)*(6*sum(NxTri))+sum(NxTri),2) = (j-1)*(8*sum(NxTri))+2:2:(j-1)*(8*sum(NxTri))+2*sum(NxTri);
           edges((j-1)*(6*sum(NxTri))+1:(j-1)*(6*sum(NxTri))+sum(NxTri)-1,3) = (j-1)*(8*sum(NxTri))+3:2:(j-1)*(8*sum(NxTri))+2*sum(NxTri);
@@ -728,15 +728,15 @@ try
         else % South-North circularity
           NxTri = Nx/2;
           NyTri = Ny/2;
-          filteredNodes = zeros((8*sum(NxTri)+2)*sum(NyTri),2);
+          filteredNodes = zeros((8*sum(NxTri)+2)*sum(NyTri),size(baseNodes,2));
           edges = zeros((6*sum(NxTri)+1)*sum(NyTri),3);
           elements = zeros(sum(Nx)*sum(Ny),6);
 % ===============> OK
           for j=1:sum(NyTri)-1
-            filteredNodes((j-1)*(8*sum(NxTri)+2)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1,1:2) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1,1:2);
-            filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri),1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv),1:2);
-            filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1,1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1,1:2);
-            filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+2*sum(NxTri),1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv),1:2);
+            filteredNodes((j-1)*(8*sum(NxTri)+2)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1,:) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1,:);
+            filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri),:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv),:);
+            filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1,:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1,:);
+            filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+2*sum(NxTri),:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv),:);
             elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),1) = (j-1)*(8*sum(NxTri)+2)+1:2:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)-1;
             elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),2) = (j-1)*(8*sum(NxTri)+2)+3:2:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1;
             elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),3) = (j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2:2:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri);
@@ -785,10 +785,10 @@ try
           end
 % ===============> OK
           j = sum(NyTri);
-          filteredNodes((j-1)*(8*sum(NxTri)+2)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1,1:2) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1,1:2);
-          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri),1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv),1:2);
-          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1,1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1,1:2);
-          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+2*sum(NxTri),1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv),1:2);
+          filteredNodes((j-1)*(8*sum(NxTri)+2)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1,:) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1,:);
+          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri),:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv),:);
+          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1,:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1,:);
+          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+2*sum(NxTri),:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv),:);
 % ===============> OK
           elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),1) = (j-1)*(8*sum(NxTri)+2)+1:2:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)-1;
           elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),2) = (j-1)*(8*sum(NxTri)+2)+3:2:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1;
@@ -874,14 +874,14 @@ try
       else
         NxTri = Nx/2;
         NyTri = Ny/2;
-        filteredNodes = zeros((8*sum(NxTri)+2)*sum(NyTri)+2*sum(NxTri)+1,2);
+        filteredNodes = zeros((8*sum(NxTri)+2)*sum(NyTri)+2*sum(NxTri)+1,size(baseNodes,2));
         edges = zeros((6*sum(NxTri)+1)*sum(NyTri)+sum(NxTri),3);
         elements = zeros(sum(Nx)*sum(Ny),6);
         for j=1:sum(NyTri)
-          filteredNodes((j-1)*(8*sum(NxTri)+2)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1,1:2) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1,1:2);
-          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri),1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv),1:2);
-          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1,1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1,1:2);
-          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+2*sum(NxTri),1:2) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv),1:2);
+          filteredNodes((j-1)*(8*sum(NxTri)+2)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1,:) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1,:);
+          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri),:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv),:);
+          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1,:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1,:);
+          filteredNodes((j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri)+1+2*sum(NxTri),:) = baseNodes((j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+2:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv)+1+sum(NxEquiv),:);
           elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),1) = (j-1)*(8*sum(NxTri)+2)+1:2:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)-1;
           elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),2) = (j-1)*(8*sum(NxTri)+2)+3:2:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1;
           elements((j-1)*4*sum(NxTri)+1:(j-1)*4*sum(NxTri)+sum(NxTri),3) = (j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2:2:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1+2*sum(NxTri)+2*sum(NxTri);
@@ -930,7 +930,7 @@ try
         end
 % ===============> OK
         j = sum(NyTri)+1;
-        filteredNodes((j-1)*(8*sum(NxTri)+2)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1,1:2) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1,1:2);
+        filteredNodes((j-1)*(8*sum(NxTri)+2)+1:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1,:) = baseNodes((j-1)*4*sum(NxEquiv)+1:2:(j-1)*4*sum(NxEquiv)+sum(NxEquiv)+1,:);
         edges((j-1)*(6*sum(NxTri)+1)+1:(j-1)*(6*sum(NxTri)+1)+sum(NxTri),1) = (j-1)*(8*sum(NxTri)+2)+1:2:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)-1;
         edges((j-1)*(6*sum(NxTri)+1)+1:(j-1)*(6*sum(NxTri)+1)+sum(NxTri),2) = (j-1)*(8*sum(NxTri)+2)+2:2:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri);
         edges((j-1)*(6*sum(NxTri)+1)+1:(j-1)*(6*sum(NxTri)+1)+sum(NxTri),3) = (j-1)*(8*sum(NxTri)+2)+3:2:(j-1)*(8*sum(NxTri)+2)+2*sum(NxTri)+1;

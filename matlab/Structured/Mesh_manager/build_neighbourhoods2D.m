@@ -1,5 +1,5 @@
 function[structuralneighbours,shearneighbours,...
-         bendneighbours,firstdevneighbours]=build_neighbourhoods2D(N,Nx,flagperiodicity,periodicity,...
+         bendneighbours,firstdevneighbours]=build_neighbourhoods2D(logfullfile,N,Nx,flagperiodicity,periodicity,...
                                                                    flagintbounds,indicesintbounds,typeintbounds,...
                                                                    indicesbulk,indicesinternalbulk,...
                                                                    indicesE1,indicesE2,indicesE3,indicesE4,...
@@ -57,6 +57,10 @@ function[structuralneighbours,shearneighbours,...
 %                 8  --> E4
 
 %%
+
+writeToLogFile(logfullfile,'In function: build_neighbourhoods2D\n')
+writeToLogFile(logfullfile,'\nStarting timer\n')
+start = tic;
 
 structuralneighbours = [zeros(N,1) -1*ones(N,4)];
 
@@ -400,5 +404,10 @@ if flagintbounds
         end
     end
 end
+
+elapsed = toc(start);
+writeToLogFile(logfullfile,'Timer stopped.\n')
+writeToLogFile(logfullfile,['\nELAPSED WALLCLOCK TIME: ', num2str(elapsed),' [s]\n\n'])
+writeToLogFile(logfullfile,'Exiting function: build_neighbourhoods2D\n')
 
 return

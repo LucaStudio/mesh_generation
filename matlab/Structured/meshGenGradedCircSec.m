@@ -334,18 +334,18 @@ end
 writeToLogFile(logfullfile,['Creating structured mesh by mapping ...','\n'])
 try
   writeToLogFile(logfullfile,['    Calling function ', 'transfiniteinterpolation2D',' ...\n']);
-  mappedMesh = transfiniteinterpolation2D(length(Hline)*length(Vline),baseMesh,A(1),B(1),A(2),D(2),length(Hline),length(Vline),1,[A1;AB1;B1],[A1;AD1;D1],[D1;DC1;C1],[B1;BC1;C1],A,B,C,D);
+  mappedMesh = transfiniteinterpolation2D(logfullfile,length(Hline)*length(Vline),baseMesh,A(1),B(1),A(2),D(2),length(Hline),length(Vline),1,[A1;AB1;B1],[A1;AD1;D1],[D1;DC1;C1],[B1;BC1;C1],A,B,C,D);
   writeToLogFile(logfullfile,['    ... done.','\n'])
   writeToLogFile(logfullfile,['    Calling function ', 'getindices2D',' ...\n']);
-  [indicesbulk,indicesinternalbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesexternalE1,indicesexternalE2,indicesexternalE3,indicesexternalE4,indicesinternalE1,indicesinternalE2,indicesinternalE3,indicesinternalE4,indicesC1,indicesC2,indicesC3,indicesC4,indicesinternalC1,indicesinternalC2,indicesinternalC3,indicesinternalC4] = getindices2D(length(Hline),length(Vline));
+  [indicesbulk,indicesinternalbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesexternalE1,indicesexternalE2,indicesexternalE3,indicesexternalE4,indicesinternalE1,indicesinternalE2,indicesinternalE3,indicesinternalE4,indicesC1,indicesC2,indicesC3,indicesC4,indicesinternalC1,indicesinternalC2,indicesinternalC3,indicesinternalC4] = getindices2D(logfullfile,length(Hline),length(Vline));
   writeToLogFile(logfullfile,['    ... done.','\n'])
   writeToLogFile(logfullfile,['    Calling function ', 'build_neighbourhoods2D',' ...\n']);
-  [temp1,temp2,temp3,firstdevneighbours] = build_neighbourhoods2D(length(Hline)*length(Vline),length(Hline),0,0,0,0,0,indicesbulk,indicesinternalbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesexternalE1,indicesexternalE2,indicesexternalE3,indicesexternalE4,indicesinternalE1,indicesinternalE2,indicesinternalE3,indicesinternalE4,indicesC1,indicesC2,indicesC3,indicesC4,indicesinternalC1,indicesinternalC2,indicesinternalC3,indicesinternalC4);
+  [temp1,temp2,temp3,firstdevneighbours] = build_neighbourhoods2D(logfullfile,length(Hline)*length(Vline),length(Hline),0,0,0,0,0,indicesbulk,indicesinternalbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesexternalE1,indicesexternalE2,indicesexternalE3,indicesexternalE4,indicesinternalE1,indicesinternalE2,indicesinternalE3,indicesinternalE4,indicesC1,indicesC2,indicesC3,indicesC4,indicesinternalC1,indicesinternalC2,indicesinternalC3,indicesinternalC4);
   writeToLogFile(logfullfile,['    ... done.','\n'])
   writeToLogFile(logfullfile,['    Calling function ', 'sparseellipticgridgen2D',' ...\n']);
   itmax = 10;
   tol = 10^-8;
-  mappedMesh = sparseellipticgridgen2D(length(Hline),length(Hline)*length(Vline),mappedMesh,[(B(1)-A(1))/(length(Hline)-1),(D(2)-A(2))/(length(Vline)-1)],0,0,indicesbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesC1,indicesC2,indicesC3,indicesC4,firstdevneighbours,itmax,tol,0);
+  mappedMesh = sparseellipticgridgen2D(logfullfile,length(Hline),length(Hline)*length(Vline),mappedMesh,[(B(1)-A(1))/(length(Hline)-1) (D(2)-A(2))/(length(Vline)-1)],0,0,indicesbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesC1,indicesC2,indicesC3,indicesC4,firstdevneighbours,itmax,tol,0);
   clear temp1 temp2 temp3
   writeToLogFile(logfullfile,['    ... done.','\n'])
   writeToLogFile(logfullfile,['... done.','\n'])

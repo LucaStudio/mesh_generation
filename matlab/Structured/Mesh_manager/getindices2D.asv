@@ -2,12 +2,11 @@ function[indicesbulk,indicesinternalbulk,...
          indicesE1,indicesE2,indicesE3,indicesE4,...
          indicesexternalE1,indicesexternalE2,indicesexternalE3,indicesexternalE4,...
          indicesinternalE1,indicesinternalE2,indicesinternalE3,indicesinternalE4,...
-         indicesC1,indicesC2,indicesC3,indicesC4,...
-         indicesinternalC1,indicesinternalC2,indicesinternalC3,indicesinternalC4]=getindices2D(logfullfile,Nx,Ny)
+         indicesC1,indicesC2,indicesC3,indicesC4,indicesinternalC1,indicesinternalC2,indicesinternalC3,indicesinternalC4]=getindices2D(Nx,Ny)
 
 %%
 %==============================================================================
-% Copyright (c) 2016 - 2017 Université de Lorraine & Luleå tekniska universitet
+% Copyright (c) 2016 Université de Lorraine & Luleå tekniska universitet
 % Author: Luca Di Stasio <luca.distasio@gmail.com>
 %                        <luca.distasio@ingpec.eu>
 %
@@ -42,10 +41,6 @@ function[indicesbulk,indicesinternalbulk,...
 %  A function to
 %
 %%
-
-writeToLogFile(logfullfile,'In function: getindices2D\n')
-writeToLogFile(logfullfile,'\nStarting timer\n')
-start = tic;
 
 indicesbulk = zeros((Nx-2)*(Ny-2),1);
 
@@ -149,10 +144,5 @@ indicesinternalC2 = [(Nx-1) + Nx + Nx*Ny;Nx-1;2*Nx];
 indicesinternalC3 = [Nx*Ny - Nx - 1 + Nx*Ny;Nx+(Ny-2)*Nx;Nx*Ny-1];
 
 indicesinternalC4 = [2 + Nx*(Ny-2) + Nx*Ny;1+(Ny-2)*Nx;2+(Ny-1)*Nx];
-
-elapsed = toc(start);
-writeToLogFile(logfullfile,'Timer stopped.\n')
-writeToLogFile(logfullfile,['\nELAPSED WALLCLOCK TIME: ', num2str(elapsed),' [s]\n\n'])
-writeToLogFile(logfullfile,'Exiting function: getindices2D\n')
 
 return

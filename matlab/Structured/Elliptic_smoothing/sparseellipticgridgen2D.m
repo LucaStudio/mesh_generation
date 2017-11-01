@@ -1,4 +1,4 @@
-function[lattice]=sparseellipticgridgen2D(Nx,N,lattice,deltaq,flagperiodicity,periodicity,indicesbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesC1,indicesC2,indicesC3,indicesC4,firstdevneighbours,itmax,tol,spyflag)
+function[lattice]=sparseellipticgridgen2D(logfullfile,Nx,N,lattice,deltaq,flagperiodicity,periodicity,indicesbulk,indicesE1,indicesE2,indicesE3,indicesE4,indicesC1,indicesC2,indicesC3,indicesC4,firstdevneighbours,itmax,tol,spyflag)
 
 %%
 %==============================================================================
@@ -40,6 +40,10 @@ function[lattice]=sparseellipticgridgen2D(Nx,N,lattice,deltaq,flagperiodicity,pe
 %         Output: mesh in the physical domain
 
 %%
+
+writeToLogFile(logfullfile,'In function: sparseellipticgridgen2D\n')
+writeToLogFile(logfullfile,'\nStarting timer\n')
+start = tic;
 
 boundaryindices = [];
 periodicboundaryindices = [];
@@ -150,5 +154,10 @@ while it<=itmax && err>=tol
     it = it + 1;
     clear A bx by metriccoefficients
 end
+
+elapsed = toc(start);
+writeToLogFile(logfullfile,'Timer stopped.\n')
+writeToLogFile(logfullfile,['\nELAPSED WALLCLOCK TIME: ', num2str(elapsed),' [s]\n\n'])
+writeToLogFile(logfullfile,'Exiting function: sparseellipticgridgen2D\n')
 
 return
