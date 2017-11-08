@@ -48,7 +48,7 @@ function[nodes,elements,edges,...
 %         ly - [N x 1] vector - Side length in each one of the N mesh regions in y-direction
 %         Nx - [M x 1] vector - Number of ELEMENTS in each one of the M mesh regions in x-direction
 %         Ny - [N x 1] vector - Number of ELEMENTS in each one of the N mesh regions in y-direction
-%         holes - [H x 3] matrix - H is the number of holes; for each hole the following data must pe provided:
+%         holes - [H x 3] matrix - H is the number of holes; for each hole the following data must be provided:
 %                                  xC - scalar - x-coordinate of hole's center
 %                                  yC - scalar - y-coordinate of hole's center
 %                                  R - scalar - Radius
