@@ -28,7 +28,29 @@ Tested with Python 2.7 Anaconda 2.4.1 (64-bit) distribution in Windows 7.
 
 '''
 
-def transfiniteLagrangeInterp2D():
+def transfiniteLagrangeInterp2D(vertices,edges):
+    # vertices = [c1,c2,c3,C4]
+    # edges = [e1,e2,e3,e4]
+    # e1 = e1(xi,eta_min) = e1(xi) = (x(xi),y(xi))
+    # e2 = e2(xi_min,eta) = e2(eta) = (x(eta),y(eta))
+    # e3 = e3(xi,eta_max) = e3(xi) = (x(xi),y(xi))
+    # e4 = e4(xi_max,eta) = e4(eta) = (x(eta),y(eta))
+    # c1 = c1(xi_min,eta_min) = (x1,y1)
+    # c2 = c2(xi_max,eta_min) = (x2,y2)
+    # c3 = c3(xi_max,eta_max) = (x3,y3)
+    # c4 = c4(xi_min,eta_max) = (x4,y4)
+    # e1 is a Ndim1 x 6 vector (x,y,dxdxi,dxdeta,dydxi,dydeta)
+    # e2 is a Ndim2 x 6 vector (x,y,dxdxi,dxdeta,dydxi,dydeta)
+    # e3 is a Ndim1 x 6 vector (x,y,dxdxi,dxdeta,dydxi,dydeta)
+    # e4 is a Ndim2 x 6 vector (x,y,dxdxi,dxdeta,dydxi,dydeta)
+    # c1 is a 1 x 8 vector (x,y,dxdxi,dxdeta,dydxi,dydeta,d2xdxideta,d2ydxideta)
+    # c2 is a 1 x 8 vector (x,y,dxdxi,dxdeta,dydxi,dydeta,d2xdxideta,d2ydxideta)
+    # c3 is a 1 x 8 vector (x,y,dxdxi,dxdeta,dydxi,dydeta,d2xdxideta,d2ydxideta)
+    # c4 is a 1 x 8 vector (x,y,dxdxi,dxdeta,dydxi,dydeta,d2xdxideta,d2ydxideta)
+    R =
+    P =
+    for r in range(0,R):
+        for p in range(0,P):
 
 def transfiniteLagrangeInterp3D():
     #                 f1 = e1(xi,eta_min,zeta) = f1(xi) = (x(xi),y(xi))
