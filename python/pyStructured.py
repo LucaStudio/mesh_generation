@@ -47,8 +47,8 @@ def transfiniteLagrangeInterp2D(vertices,edges):
     # c2 is a 1 x 8 vector (x,y,dxdxi,dxdeta,dydxi,dydeta,d2xdxideta,d2ydxideta)
     # c3 is a 1 x 8 vector (x,y,dxdxi,dxdeta,dydxi,dydeta,d2xdxideta,d2ydxideta)
     # c4 is a 1 x 8 vector (x,y,dxdxi,dxdeta,dydxi,dydeta,d2xdxideta,d2ydxideta)
-    R =
-    P =
+    R = len(edges['e1'])
+    P = len(edges['e2'])
     for r in range(0,R):
         for p in range(0,P):
 
