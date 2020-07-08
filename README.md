@@ -1,2 +1,2 @@
-# mesh_generation
+# Mesh Generation
 Tools for mesh generation
